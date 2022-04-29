@@ -57,7 +57,7 @@ export default class Edge extends Component {
 
         //  parte que faz o GET na API -------------------------------------------------------------------------
 
-        function handleTokenCallback(body) {
+        const handleTokenCallback = (body) => {
             fetch(`https://api.${environment}/api/v2/telephony/providers/edges?pageNumber=1`, {
                 method: 'GET',
                 headers: {
@@ -65,18 +65,15 @@ export default class Edge extends Component {
                     'Authorization': `${body.token_type} ${body.access_token}`
                 }
             }).then(res => {
-                if (res.ok) {
-                    return res.json();
-                } else {
-                    throw Error(res.statusText);
-                }
+                return res.json();
             })
                 .then(jsonResponse => {
                     console.log(jsonResponse)
                     this.setState({ // essa parte aqui esse setState nao Vai nao sei como bota ele no contexto do state la de cima ta ligado
                         isLoaded: true,
-                        items: jsonResponse
+                        items: jsonResponse.entities
                     })
+                    console.log(this.state.items.entities)
                 })
                 .catch(e => console.error(e));
         }
@@ -86,20 +83,24 @@ export default class Edge extends Component {
     render() {
 
         var { isLoaded, items } = this.state;
-        console.log(items.environment);
+
+
+        console.log('-----------------------')
+        console.log(typeof (items))
+        console.log(items)
+        console.log('-----------------------')
         if (!isLoaded) {
             return <div>Loadinggg...</div>
         }
         else {
             return (
-
                 <div className='App'>
-                    <h1>Monitoramento Genesys</h1>
+                    <h1 className='Header'>Monitoramento Genesys</h1>
                     <ul>
-                        {items.map(item => (
-                            <li key={item.id}>
-                                <StatusBox name={item.name} statusCode={item.statusCode} />
-                            </li>
+                        {this.state.items.map(items => (
+                             <li key={items.id}>
+                            <StatusBox name={items.name} id={items.id} statusCode={items.statusCode} />
+                             </li>
                         ))}
                     </ul>
                 </div>

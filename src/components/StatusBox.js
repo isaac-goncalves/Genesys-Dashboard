@@ -20,7 +20,9 @@ function StatusBox(props) {
     return (
         <div className='status-box'>
             <p className='status-name'> {props.name} </p>
+            <p className='status-id'>{props.id}</p>
             <p className={'status-state ' + (active ? 'status-active' : 'status-failure')}> {capitalizeFirstLetter(props.statusCode)}</p>
+            
         </div>
     )
 }

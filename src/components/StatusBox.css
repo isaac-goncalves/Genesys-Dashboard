@@ -5,13 +5,17 @@
   width: 200px;
   display: flex;
   flex-direction: column;
-  height: 150px;
+  height: 200px;
   margin-bottom: 25px;
 }
 .status-name {
     background-color: inherit;
     margin-top: 15px;
 }
+.status-id {
+  background-color: inherit;
+  margin-top: 10px;
+}  
 .status-state {
   background-color: inherit;
   font-size: 3rem;
