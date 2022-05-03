@@ -13,7 +13,6 @@ function StatusBox(props) {
             active = true
         }
         else active = false;
-        console.log(active)
     }
     checkActive()
 
@@ -22,7 +21,6 @@ function StatusBox(props) {
             <p className='status-name'> {props.name} </p>
             <p className='status-id'>{props.id}</p>
             <p className={'status-state ' + (active ? 'status-active' : 'status-failure')}> {capitalizeFirstLetter(props.statusCode)}</p>
-            
         </div>
     )
 }
