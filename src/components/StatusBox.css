@@ -5,21 +5,18 @@
   width: 200px;
   display: flex;
   flex-direction: column;
-  height: 200px;
+  height: 180px;
   margin-bottom: 25px;
 }
 .status-name {
     background-color: inherit;
     margin-top: 15px;
 }
-.status-id {
-  background-color: inherit;
-  margin-top: 10px;
-}  
+
 .status-state {
   background-color: inherit;
   font-size: 3rem;
-  margin-top: 15px;
+  margin-top: 30px;
 }
 .status-active {
   color: rgb(115, 191, 105);

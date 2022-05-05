@@ -3,10 +3,6 @@ import StatusBox from './StatusBox';
 import { Buffer } from 'buffer';
 import emailjs from 'emailjs-com';
 
-
-
-
-
 export default class Edge extends Component {
 
     constructor(props) {
@@ -16,35 +12,11 @@ export default class Edge extends Component {
             isLoaded: true,
             Edge0PreviousStatuscode: 'TEST',
             Edge1PreviousStatuscode: 'ACTIVE',
-            Edge2PreviousStatuscode: 'TEST'
+            Edge2PreviousStatuscode: 'TEST',
+            Trunk0InboundCalls: 0,
+            Trunk1InboundCalls: 0,
+            Trunk2InboundCalls: 0
         };
-        //NSEI me falaram pra colocar um bind com a função que vai usar o this
-    }
-    sendEmail(
-        edge_name,
-        edge_id,
-        edge_state,
-        edge_actual,
-        edge_date,
-    ) {
-        const YOUR_SERVICE_ID = process.env.REACT_APP_YOUR_PUBLIC_KEY;
-        const YOUR_TEMPLATE_ID = process.env.REACT_APP_YOUR_TEMPLATE_ID;
-        const YOUR_PUBLIC_KEY = process.env.REACT_APP_YOUR_SERVICE_ID;
-
-        const edgeParams = {
-            edge_name: edge_name,
-            edge_id: edge_id,
-            edge_state: edge_state,
-            edge_actual: edge_actual,
-            edge_date: edge_date
-        };
-
-        emailjs.sendForm(YOUR_SERVICE_ID, YOUR_TEMPLATE_ID, edgeParams, YOUR_PUBLIC_KEY)
-            .then((result) => {
-                console.log(result.text);
-            }, (error) => {
-                console.log(error.text);
-            });
     }
 
     componentDidMount() {
@@ -65,6 +37,9 @@ export default class Edge extends Component {
         var today = new Date();
         var date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
         var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        var hours = today.getHours();
+        var day = today.getDay();
+        console.log('hora ' + hours + ' dia ' + day)
         var dateTime = time + ' do dia ' + date;
 
         const params = new URLSearchParams();
@@ -91,14 +66,14 @@ export default class Edge extends Component {
             })
             .then(jsonResponse => {
                 console.log(jsonResponse);
-                handleTokenCallback(jsonResponse);
-
+                getEdges(jsonResponse);
+                getTrunks(jsonResponse);
             })
             .catch(e => console.error(e));
 
-        //  parte que faz o GET na API -------------------------------------------------------------------------
+        //  parte que faz o GET dos trunks na API -------------------------------------------------------------------------
 
-        const handleTokenCallback = (body) => {
+        const getEdges = (body) => {
             fetch(`https://api.${environment}/api/v2/telephony/providers/edges?pageNumber=1`, {
                 method: 'GET',
                 headers: {
@@ -170,7 +145,7 @@ export default class Edge extends Component {
                         }
                         console.log('Email Enviado')
                         console.log(edgeParams)
-                        fetch("http://localhost:4000/send_mail", {
+                        fetch("http://localhost:4000/send_mail_edges", {
 
                             // Adding method type
                             method: "POST",
@@ -193,18 +168,90 @@ export default class Edge extends Component {
                 })
                 .catch(e => console.error(e));
         }
+        const getTrunks = (body) => {
+            fetch(`https://api.${environment}/api/v2/telephony/providers/edges/trunks/metrics?trunkIds=4f6fddb1-cf7e-4319-a506-da68d3f0d470%2Ceaefb7ac-794a-4396-9351-1fdf60a6c178%2C5baae059-b903-42ac-9d7a-e61b869513ff`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${body.token_type} ${body.access_token}`
+                }
+            }).then(res => {
+                return res.json();
+            })
+                .then(jsonResponse => {
+                    console.log('Trunk -----------------------------')
+                    console.log('Trunk New.Val: ' + jsonResponse[0].calls.inboundCallCount)
+                    console.log('Trunk New.Val: ' + jsonResponse[1].calls.inboundCallCount)
+                    console.log('Trunk New.Val: ' + jsonResponse[2].calls.inboundCallCount)
+                    console.log('Trunk -----------------------------')
+                    console.log('Trunk Prev.Val: ' + this.state.Trunk0InboundCalls)
+                    console.log('Trunk Prev.Val: ' + this.state.Trunk1InboundCalls)
+                    console.log('Trunk Prev.Val: ' + this.state.Trunk2InboundCalls)
+                    console.log('Trunk -----------------------------')
+                    // //  Parte compara se houve mudança de estado e chama função email -------------------------------------------------------------------------
+                    if (hours >= 8 && hours < 20 && day >= 1 && day <= 6) {
+                        console.log('hoje é dia de semana')
+                        if (jsonResponse[0].calls.inboundCallCount < 2 && jsonResponse[1].calls.inboundCallCount < 2 && jsonResponse[2].calls.inboundCallCount < 2) {
+                            sendEmail(
+                                jsonResponse.entities[0].name,
+                                jsonResponse.entities[0].id,
+                                this.state.Edge0PreviousStatuscode,
+                                jsonResponse.entities[0].statusCode,
+                                dateTime
+                            )
+                            console.log('Problem detected on ligaçoes' )
+                        }
+                        else{
+                            console.log('nenhum problema no numero de ligaçoes')
+                        }
+                    }else{
+                        console.log("Hoje é fim de semana ou esta fora de horário")
+                    }
+                    // //  Parte compara se houve mudança de estado e chama função email -------------------------------------------------------------------------
+                    function sendEmail(
+                        edge_name,
+                        edge_id,
+                        edge_state,
+                        edge_actual,
+                        edge_date) {
 
+
+                        const edgeParams = {
+                            edge_name: edge_name,
+                            edge_id: edge_id,
+                            edge_state: edge_state,
+                            edge_actual: edge_actual,
+                            edge_date: edge_date
+                        }
+                        console.log('Email Enviado')
+                        console.log(edgeParams)
+                        fetch("http://localhost:4000/send_mail_trunks", {
+
+                            // Adding method type
+                            method: "POST",
+
+                            // Adding body or contents to sen
+                            // Adding headers to the request
+                            headers: {
+                                "Content-type": "application/json; charset=UTF-8"
+                            }, body: JSON.stringify(edgeParams)
+                        })
+                        //   axios.post("http://localhost:4000/send_mail"), {edge_name}
+                    }
+                    this.setState({
+                        isLoaded: true,
+                        Trunk0InboundCalls: jsonResponse[0].calls.inboundCallCount,
+                        Trunk1InboundCalls: jsonResponse[1].calls.inboundCallCount,
+                        Trunk2InboundCalls: jsonResponse[2].calls.inboundCallCount
+                    })
+                })
+                .catch(e => console.error(e));
+        }
     }
     // -------------------------------------------------------------------------
     render() {
 
         var { isLoaded, items } = this.state;
-
-
-        console.log('-----------------------')
-        console.log(typeof (items))
-        console.log(items)
-        console.log('-----------------------')
 
         if (!isLoaded) {
             return <div>Loadinggg...</div>
@@ -216,7 +263,7 @@ export default class Edge extends Component {
                     <ul>
                         {this.state.items.map(items => (
                             <li key={items.id}>
-                                <StatusBox name={items.name} id={items.id} statusCode={items.statusCode} />
+                                <StatusBox name={items.name} statusCode={items.statusCode} />
                             </li>
                         ))}
                     </ul>
