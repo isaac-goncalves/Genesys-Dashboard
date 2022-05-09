@@ -1,6 +1,24 @@
 ul {
     list-style-type: none;
 }
-h1 {
-    margin-bottom: 100px;
+.StatusBox {
+    display: flex;
+}
+
+.Items{
+    display: flex;
+    flex-direction: row;
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: 10px;
+  }
+  .grid-item {
+    padding: 10px;
+    font-size: 30px;
+    text-align: center;
+  }
+  h1{
+    margin-top: 30px;
   }

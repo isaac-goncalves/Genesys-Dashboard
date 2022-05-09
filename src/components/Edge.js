@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import StatusBox from './StatusBox';
 import { Buffer } from 'buffer';
-import emailjs from 'emailjs-com';
+import Chart from './Chart';
+import './Edge.css'
+
+
 
 export default class Edge extends Component {
 
@@ -10,12 +13,13 @@ export default class Edge extends Component {
         this.state = {
             items: [],
             isLoaded: true,
-            Edge0PreviousStatuscode: 'TEST',
+            Edge0PreviousStatuscode: 'ACTIVE',
             Edge1PreviousStatuscode: 'ACTIVE',
-            Edge2PreviousStatuscode: 'TEST',
-            Trunk0InboundCalls: 0,
-            Trunk1InboundCalls: 0,
-            Trunk2InboundCalls: 0
+            Edge2PreviousStatuscode: 'ACTIVE',
+            Trunk0InboundCalls: [0,0,0,0,0],
+            Trunk1InboundCalls: [0,0,0,0,0],
+            Trunk2InboundCalls: [0,0,0,0,0],
+            TimeData: [0,0,0,0,0]
         };
     }
 
@@ -187,62 +191,58 @@ export default class Edge extends Component {
                     console.log('Trunk Prev.Val: ' + this.state.Trunk0InboundCalls)
                     console.log('Trunk Prev.Val: ' + this.state.Trunk1InboundCalls)
                     console.log('Trunk Prev.Val: ' + this.state.Trunk2InboundCalls)
+                    console.log('Time Data: ' + this.state.TimeData)
                     console.log('Trunk -----------------------------')
                     // //  Parte compara se houve mudança de estado e chama função email -------------------------------------------------------------------------
                     if (hours >= 8 && hours < 20 && day >= 1 && day <= 6) {
                         console.log('hoje é dia de semana')
                         if (jsonResponse[0].calls.inboundCallCount < 2 && jsonResponse[1].calls.inboundCallCount < 2 && jsonResponse[2].calls.inboundCallCount < 2) {
                             sendEmail(
-                                jsonResponse.entities[0].name,
-                                jsonResponse.entities[0].id,
-                                this.state.Edge0PreviousStatuscode,
-                                jsonResponse.entities[0].statusCode,
+                                jsonResponse[0].calls.inboundCallCount,
+                                jsonResponse[1].calls.inboundCallCount,
+                                jsonResponse[2].calls.inboundCallCount,
                                 dateTime
                             )
-                            console.log('Problem detected on ligaçoes' )
+                            console.log('Problema detectado no numero de ligaçoes')
                         }
-                        else{
-                            console.log('nenhum problema no numero de ligaçoes')
+                        else {
+                            console.log('Nenhum problema no numero de ligaçoes')
                         }
-                    }else{
+                    } else {
                         console.log("Hoje é fim de semana ou esta fora de horário")
                     }
                     // //  Parte compara se houve mudança de estado e chama função email -------------------------------------------------------------------------
                     function sendEmail(
-                        edge_name,
-                        edge_id,
-                        edge_state,
-                        edge_actual,
-                        edge_date) {
+                        trunk0_calls,
+                        trunk1_calls,
+                        trunk2_calls,
+                        date
+                    ) {
 
 
-                        const edgeParams = {
-                            edge_name: edge_name,
-                            edge_id: edge_id,
-                            edge_state: edge_state,
-                            edge_actual: edge_actual,
-                            edge_date: edge_date
+                        const trunkParams = {
+                            trunk0_calls: trunk0_calls,
+                            trunk1_calls: trunk1_calls,
+                            trunk2_calls: trunk2_calls,
+                            date: date
                         }
                         console.log('Email Enviado')
-                        console.log(edgeParams)
+                        console.log(trunkParams)
                         fetch("http://localhost:4000/send_mail_trunks", {
-
-                            // Adding method type
                             method: "POST",
-
-                            // Adding body or contents to sen
-                            // Adding headers to the request
                             headers: {
                                 "Content-type": "application/json; charset=UTF-8"
-                            }, body: JSON.stringify(edgeParams)
+                            }, body: JSON.stringify(trunkParams)
                         })
-                        //   axios.post("http://localhost:4000/send_mail"), {edge_name}
                     }
+
+
                     this.setState({
                         isLoaded: true,
-                        Trunk0InboundCalls: jsonResponse[0].calls.inboundCallCount,
-                        Trunk1InboundCalls: jsonResponse[1].calls.inboundCallCount,
-                        Trunk2InboundCalls: jsonResponse[2].calls.inboundCallCount
+                        Trunk0InboundCalls: [...this.state.Trunk0InboundCalls, jsonResponse[0].calls.inboundCallCount],
+                        Trunk1InboundCalls: [...this.state.Trunk1InboundCalls, jsonResponse[1].calls.inboundCallCount],
+                        Trunk2InboundCalls: [...this.state.Trunk2InboundCalls, jsonResponse[2].calls.inboundCallCount],
+                        TimeData: [...this.state.TimeData, time]
                     })
                 })
                 .catch(e => console.error(e));
@@ -251,8 +251,11 @@ export default class Edge extends Component {
     // -------------------------------------------------------------------------
     render() {
 
-        var { isLoaded, items } = this.state;
 
+        var { isLoaded, items, Trunk0InboundCalls, Trunk1InboundCalls, Trunk2InboundCalls, TimeData } = this.state;
+        console.log(Trunk0InboundCalls)
+        console.log(Trunk1InboundCalls)
+        console.log(Trunk2InboundCalls)
         if (!isLoaded) {
             return <div>Loadinggg...</div>
         }
@@ -260,13 +263,25 @@ export default class Edge extends Component {
             return (
                 <div className='App'>
                     <h1 className='Header'>Monitoramento Genesys</h1>
-                    <ul>
-                        {this.state.items.map(items => (
-                            <li key={items.id}>
-                                <StatusBox name={items.name} statusCode={items.statusCode} />
-                            </li>
-                        ))}
-                    </ul>
+                    <div className='grid-container'>
+                        <div className='grid-item StatusBox'>
+                            <ul>
+                                {this.state.items.map(items => (
+                                    <li key={items.id}>
+                                        <StatusBox name={items.name} statusCode={items.statusCode} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div className='grid-item'>
+                            <Chart 
+                            trunk0data={Trunk0InboundCalls} 
+                            trunk1data={Trunk1InboundCalls} 
+                            trunk2data={Trunk2InboundCalls}
+                            TimeData={TimeData}
+                             />
+                        </div>
+                    </div>
                 </div>
             )
         }

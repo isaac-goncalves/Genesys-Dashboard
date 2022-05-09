@@ -16,7 +16,7 @@
 .status-state {
   background-color: inherit;
   font-size: 3rem;
-  margin-top: 30px;
+  margin-top: 0px;
 }
 .status-active {
   color: rgb(115, 191, 105);

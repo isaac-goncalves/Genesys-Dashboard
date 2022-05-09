@@ -4,6 +4,7 @@ import  Edge from './components/Edge'
 
 import $ from 'jquery';
 import { Chart } from 'react-chartjs-2';
+import ChartComponent from './components/Chart';
 
 window.jQuery = $;
 window.$ = $;
