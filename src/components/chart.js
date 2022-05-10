@@ -54,7 +54,7 @@ function Chart(props) {
     <>
       <div className="chart">
         <Line
-          responsive={true}
+         
           options={options}
           data={{
             labels: props.TimeData.slice(Math.max(props.TimeData.length - 10, 0)),

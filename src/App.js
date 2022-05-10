@@ -1,6 +1,6 @@
 import './App.css';
 import { useState, useEffect } from 'react'
-import  Edge from './components/Edge'
+import  Dashboard from './components/Dasboard'
 
 import $ from 'jquery';
 import { Chart } from 'react-chartjs-2';
@@ -14,7 +14,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <Edge/>
+      <Dashboard/>
     </div>
   );
 }
