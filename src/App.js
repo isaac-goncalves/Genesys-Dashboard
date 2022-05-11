@@ -1,10 +1,13 @@
 import './App.css';
 import { useState, useEffect } from 'react'
-import  Dashboard from './components/Dasboard'
+import Dashboard from './components/Dasboard'
 
 import $ from 'jquery';
-import { Chart } from 'react-chartjs-2';
 import ChartComponent from './components/Chart';
+import { AppBar, Button, Toolbar, Typography } from "@mui/material"
+import { Delete } from "@mui/icons-material"
+import TimelineIcon from '@mui/icons-material/Timeline';
+
 
 window.jQuery = $;
 window.$ = $;
@@ -14,7 +17,15 @@ export default function App() {
 
   return (
     <div className="App">
-      <Dashboard/>
+      <AppBar style={{ background: 'rgb(51,56,61)' }} position='sticky'>
+        <Toolbar>
+        <img className='logo' src="/LG logo.png" alt="LG CNS logo" height="30"/>
+          <Typography  variant='h5'>
+        Monitoramento Genesys
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Dashboard />
     </div>
   );
 }

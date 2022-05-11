@@ -13,10 +13,10 @@ var state = {
 var state2 = {
     items: [],
     JsonTrunks: [],
-    Trunk0InboundCalls: [0, 0, 0, 0, 0],
-    Trunk1InboundCalls: [0, 0, 0, 0, 0],
-    Trunk2InboundCalls: [0, 0, 0, 0, 0],
-    TimeData: [0, 0, 0, 0, 0]
+    Trunk0InboundCalls: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    Trunk1InboundCalls: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    Trunk2InboundCalls: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    TimeData: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 };
 
 
@@ -248,10 +248,10 @@ function callApi() {
                 }
                 state2 = {
                     JsonTrunks: jsonResponse,
-                    Trunk0InboundCalls: [...state2.Trunk0InboundCalls, jsonResponse[0].calls.inboundCallCount],
-                    Trunk1InboundCalls: [...state2.Trunk1InboundCalls, jsonResponse[1].calls.inboundCallCount],
-                    Trunk2InboundCalls: [...state2.Trunk2InboundCalls, jsonResponse[2].calls.inboundCallCount],
-                    TimeData: [...state2.TimeData, time]
+                    Trunk0InboundCalls: [...state2.Trunk0InboundCalls, jsonResponse[0].calls.inboundCallCount].slice(Math.max([...state2.Trunk0InboundCalls, jsonResponse[0].calls.inboundCallCount].length - 20, 0)),
+                    Trunk1InboundCalls: [...state2.Trunk1InboundCalls, jsonResponse[1].calls.inboundCallCount].slice(Math.max([...state2.Trunk1InboundCalls, jsonResponse[1].calls.inboundCallCount].length - 20, 0)),
+                    Trunk2InboundCalls: [...state2.Trunk2InboundCalls, jsonResponse[2].calls.inboundCallCount].slice(Math.max([...state2.Trunk2InboundCalls, jsonResponse[2].calls.inboundCallCount].length - 20, 0)),
+                    TimeData: [...state2.TimeData, time].slice(Math.max([...state2.TimeData, time].length - 20, 0))
                 }
                 // //  Parte compara se houve mudança de estado e chama função email -------------------------------------------------------------------------
                 async function sendEmail(

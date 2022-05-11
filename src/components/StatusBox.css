@@ -1,27 +1,14 @@
 .status-box {
-  border: 1px solid rgba(204, 204, 220, 0.07);
-  border-radius: 3px;
-  background-color: rgb(36, 40, 43);
-  width: 200px;
-  display: flex;
-  flex-direction: column;
-  height: 180px;
   margin-bottom: 25px;
 }
-.status-name {
-    background-color: inherit;
-    margin-top: 15px;
-}
 
-.status-state {
-  background-color: inherit;
-  font-size: 3rem;
-  margin-top: 0px;
-}
 .status-active {
   color: rgb(115, 191, 105);
 }
 
 .status-failure {
   color: red;
+}
+.status-state {
+  font-weight: bold;
 }

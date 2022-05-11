@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import StatusBox from './StatusBox'
 import Chart from './Chart';
 import './Dashboard.css'
+import { Box, Card, CardContent } from '@mui/material'
 
 
 
@@ -74,9 +75,8 @@ export default class Dashboard extends Component {
         else {
             return (
                 <div className='App'>
-                    <h1 className='Header'>Monitoramento Genesys</h1>
                     <div className='grid-container'>
-                        <div className='grid-item StatusBox'>
+                        <Box sx={{width: 1}} className='grid-item StatusBox'>
                             <ul>
                                 {this.state.items.map(items => (
                                     <li key={items.id}>
@@ -84,15 +84,19 @@ export default class Dashboard extends Component {
                                     </li>
                                 ))}
                             </ul>
-                        </div>
-                        <div className='grid-item'>
-                            <Chart
-                                trunk0data={Trunk0InboundCalls}
-                                trunk1data={Trunk1InboundCalls}
-                                trunk2data={Trunk2InboundCalls}
-                                TimeData={TimeData}
-                            />
-                        </div>
+                        </Box>
+                        <Box className='grid-item Chart' >
+                            <Card sx={{ maxWidth: 878 }}>
+                                <CardContent>
+                                    <Chart
+                                        trunk0data={Trunk0InboundCalls}
+                                        trunk1data={Trunk1InboundCalls}
+                                        trunk2data={Trunk2InboundCalls}
+                                        TimeData={TimeData}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </Box>
                     </div>
                 </div>
             )
