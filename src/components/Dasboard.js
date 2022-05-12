@@ -30,34 +30,34 @@ export default class Dashboard extends Component {
 
     loadData = () => {
 
-        fetch(`http://localhost:4000/get_edge_status`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                // 'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization, ININ-Client-Path',
-                // 'Access-Control-Allow-Origin': 'https://api.mypurecloud.com',
-                // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH'
-            }
-        })
-            .then(res => {
-                if (res.ok) {
-                    return res.json();
-                } else {
-                    throw Error(res.statusText);
-                }
-            })
-            .then(jsonResponse => {
-                console.log("-*-----------------------")
-                console.log(jsonResponse);
-                this.setState({
-                    isLoaded: true,
-                    items: jsonResponse.json.items.entities,
-                    Trunk0InboundCalls: jsonResponse.json.Trunk0InboundCalls,
-                    Trunk1InboundCalls: jsonResponse.json.Trunk1InboundCalls,
-                    Trunk2InboundCalls: jsonResponse.json.Trunk2InboundCalls,
-                    TimeData: jsonResponse.json.TimeData
-                })
-            })
+        // fetch(`http://localhost:4000/get_edge_status`, {
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         // 'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization, ININ-Client-Path',
+        //         // 'Access-Control-Allow-Origin': 'https://api.mypurecloud.com',
+        //         // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH'
+        //     }
+        // })
+        //     .then(res => {
+        //         if (res.ok) {
+        //             return res.json();
+        //         } else {
+        //             throw Error(res.statusText);
+        //         }
+        //     })
+        //     .then(jsonResponse => {
+        //         console.log("-*-----------------------")
+        //         console.log(jsonResponse);
+        //         this.setState({
+        //             isLoaded: true,
+        //             items: jsonResponse.json.items.entities,
+        //             Trunk0InboundCalls: jsonResponse.json.Trunk0InboundCalls,
+        //             Trunk1InboundCalls: jsonResponse.json.Trunk1InboundCalls,
+        //             Trunk2InboundCalls: jsonResponse.json.Trunk2InboundCalls,
+        //             TimeData: jsonResponse.json.TimeData
+        //         })
+        //     })
     }
 
 
