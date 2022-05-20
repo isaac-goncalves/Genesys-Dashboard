@@ -1,15 +1,20 @@
 ul {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: 1fr 4fr;
-    background: rgb(248,248,248);
-  }
-  .grid-item {
-    font-size: 30px;
-  }
-  .Chart {
-    margin: 30px;
-  }
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  background: rgb(248, 248, 248);
+}
+.grid-item {
+  font-size: 30px;
+}
+.Chart {
+  margin: 30px;
+}
+.Loading {
+position: absolute;
+top: 40%;
+left: 40%;
+}
