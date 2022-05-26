@@ -8,11 +8,6 @@ import { AppBar, Button, Toolbar, Typography } from "@mui/material"
 import { Delete } from "@mui/icons-material"
 import TimelineIcon from '@mui/icons-material/Timeline';
 
-
-window.jQuery = $;
-window.$ = $;
-global.jQuery = $;
-
 export default function App() {
 
   return (

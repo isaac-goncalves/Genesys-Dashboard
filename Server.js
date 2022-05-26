@@ -257,6 +257,7 @@ function callApi() {
                                 jsonResponse[2].calls.inboundCallCount,
                                 dateTime
                             )
+                            issueReported = false;
                             console.log('==================================')
                             console.log('Problema no numero de ligaçôes Foi Resolvido!')
                             console.log('==================================')
