@@ -30,7 +30,7 @@ export default class Dashboard extends Component {
 
     loadData = () => {
 
-        fetch(`http://localhost:4000/get_edge_status`, {
+        fetch(`http://136.166.35.153:4000/get_edge_status`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export default class Dashboard extends Component {
             return (
                 <div className='App'>
                     <div className='grid-container'>
-                        <Box sx={{width: 1}} className='grid-item StatusBox'>
+                        <Box sx={{width: 1}} className='grid-item status-box'>
                             <ul>
                                 {this.state.items.map(items => (
                                     <li key={items.id}>

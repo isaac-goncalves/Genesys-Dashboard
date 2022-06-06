@@ -1,27 +1,21 @@
-import './App.css';
-import { useState, useEffect } from 'react'
-import Dashboard from './components/Dasboard'
+import "./App.css";
+import Dashboard from "./components/Dasboard";
 
-import $ from 'jquery';
-import ChartComponent from './components/Chart';
-import { AppBar, Button, Toolbar, Typography } from "@mui/material"
-import { Delete } from "@mui/icons-material"
-import TimelineIcon from '@mui/icons-material/Timeline';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Navbar from "./components/Navbar";
+import DDrsEmbratel from "./components/Pages/ddrs-embratel";
+import LicensasGenesys from "./components/Pages/licensas-genesys";
 
 export default function App() {
-
   return (
-    <div className="App">
-      <AppBar style={{ background: 'rgb(51,56,61)' }} position='sticky'>
-        <Toolbar>
-        <img className='logo' src="/LG logo.png" alt="LG CNS logo" height="30"/>
-          <Typography  variant='h5'>
-        Monitoramento Genesys
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Dashboard />
-    </div>
+    <BrowserRouter>
+        <Navbar />
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/ddrs-embratel" element={<DDrsEmbratel />} />
+        <Route path="/licensas-genesys" element={<LicensasGenesys />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-

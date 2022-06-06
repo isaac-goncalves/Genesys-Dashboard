@@ -11,10 +11,17 @@ ul {
   font-size: 30px;
 }
 .Chart {
-  margin: 30px;
+  margin: 10px 0 0 10px;
 }
 .Loading {
 position: absolute;
 top: 40%;
 left: 40%;
+}
+.status-box {
+  margin: 5px 0 25px 10px;
+}
+.App {
+  background: rgb(248, 248, 248);
+  height: 100vh;
 }
