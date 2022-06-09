@@ -1,0 +1,46 @@
+const getLicense = (body) => {
+    console.log("Iserindo licenses");
+
+    var varPageNumber = 1;
+    var varpageCount = 10;
+    do {
+      console.log(varPageNumber);
+      fetch(
+        `https://api.${environment}/api/v2/license/users?pageSize=100&pageNumber=${varPageNumber}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${body.token_type} ${body.access_token}`,
+          },
+        }
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((jsonResponse) => {
+          console.log(jsonResponse);
+          varpageCount = jsonResponse.pageCount;
+          dbInsertLicense(jsonResponse);
+        })
+        .catch((err) => console.log(err));
+      varPageNumber++;
+    } while (varPageNumber <= varpageCount);
+  };
+
+
+function dbInsertLicense(jsonResponse) {
+    console.log(jsonResponse);
+    jsonResponse.entities.map((json) => {
+      let { id } = json;
+
+      let license = json.licenses[0];
+
+      console.log("\n" + "id: " + id, "\n" + "license: " + license);
+
+      let post = new PostLicenses(id, license);
+      post = post.saveLicenses();
+    });
+  }
+
+  

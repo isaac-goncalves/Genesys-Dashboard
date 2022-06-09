@@ -1,7 +1,7 @@
 const db = require("../config/db");
 
 class PostUsers {
-  constructor(id, name, state, department, address, manager, extension) {
+  constructor(id, name, state, department, address, manager, extension, license) {
     this.id = id;
     this.name = name;
     this.state = state;
@@ -9,10 +9,10 @@ class PostUsers {
     this.address = address;
     this.manager = manager;
     this.extension = extension;
+    this.license = license;
   }
-  
-   saveUsers() {
-     console.log('inserido no Banco!')
+  saveUsers() {
+    console.log("inserido no Banco!");
     let sql = `
     INSERT INTO
     users(
@@ -22,7 +22,8 @@ class PostUsers {
       department,
       address,
       manager,
-      extension
+      extension,
+      license
     )
   VALUES(
       '${this.id}',
@@ -31,10 +32,11 @@ class PostUsers {
       '${this.department}',
       '${this.address}',
       '${this.manager}',
-      '${this.extension}'
+      '${this.extension}',
+      '${this.license}'
     )
       `;
-    return db.execute(sql) 
+    return db.execute(sql);
   }
 
   static findAll() {
@@ -42,5 +44,5 @@ class PostUsers {
     return db.execute(sql);
   }
 }
-module.exports = PostUsers;
 
+module.exports = PostUsers;

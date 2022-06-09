@@ -1,5 +1,6 @@
 require("dotenv").config();
 const PostUsers = require("./backend/models/Users");
+const PostLicenses = require("./backend/models/Licenses");
 const db = require("./backend/config/db");
 const nodemailer = require("nodemailer");
 const express = require("express");
@@ -25,6 +26,7 @@ var state2 = {
   TimeData: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 };
 global.issueReported = false;
+var jsondata = [];
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -104,6 +106,7 @@ function callApi() {
     })
     .then((jsonResponse) => {
       // console.log(jsonResponse);
+      jsondata = jsonResponse;
       getUsers(jsonResponse);
     })
     .catch((e) => console.error(e));
@@ -111,12 +114,10 @@ function callApi() {
   //  parte que faz o GET dos users na API -------------------------------------------------------------------------
 
   const getUsers = (body) => {
-   
     console.log("Limpando o Banco");
     let sql = `TRUNCATE TABLE users;`;
     db.execute(sql);
 
-    console.log(body);
     var varPageNumber = 1;
     var varpageCount = 6;
     do {
@@ -126,12 +127,12 @@ function callApi() {
         pageNumber: varPageNumber,
         sortOrder: "ASC",
         types: ["users"],
-        returnFields: ["guid"],
+        returnFields: ["ALL_FIELDS"],
         query: [
           {
-            type: "MATCH_ALL",
-            fields: ["name"],
-            value: "",
+            type: "EXACT",
+            fields: ["state"],
+            values: ["inactive", "active", "deleted"],
           },
         ],
       };
@@ -150,14 +151,67 @@ function callApi() {
         .then((jsonResponse) => {
           console.log(jsonResponse);
           varpageCount = jsonResponse.pageCount;
-          dbInsert(jsonResponse);
+          dbInsertUsers(jsonResponse);
         })
         .catch((err) => console.log(err));
       varPageNumber++;
     } while (varPageNumber <= varpageCount);
   };
 
-  function dbInsert(jsonResponse) {
+  const getLicense = () => {
+    console.log("Iserindo licenses");
+    body = jsondata;
+    var varPageNumber = 1;
+    var varpageCount = 10;
+    do {
+      console.log(varPageNumber);
+      fetch(
+        `https://api.${environment}/api/v2/license/users?pageSize=100&pageNumber=${varPageNumber}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${body.token_type} ${body.access_token}`,
+          },
+        }
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((jsonResponse) => {
+          console.log(jsonResponse);
+          varpageCount = jsonResponse.pageCount;
+          dbInsertLicense(jsonResponse);
+        })
+        .catch((err) => console.log(err));
+      varPageNumber++;
+    } while (varPageNumber <= varpageCount);
+  };
+
+  const getManagers = () => {
+    let queryCopy = `
+   INSERT INTO managers (id)
+   SELECT manager FROM users 
+   WHERE manager <> "-" 
+   `;
+    let queryNames = `
+   UPDATE users, managers 
+   SET managers.name = users.name 
+   WHERE managers.id = users.id 
+   `;
+    let queryUpdate = `
+   UPDATE users, managers 
+   SET users.manager = managers.name 
+   WHERE managers.id = users.manager `;
+
+    db.execute(queryCopy);
+    db.execute(queryNames);
+    db.execute(queryUpdate);
+
+    console.log("Managers atualizados!");
+  };
+
+  function dbInsertUsers(jsonResponse) {
     jsonResponse.results.map((json) => {
       let { id, name, state, email } = json;
 
@@ -169,7 +223,7 @@ function callApi() {
       if (json.department != undefined) {
         department = json.department;
       }
-      
+
       let extension = "-";
       if (json.addresses[0]) {
         extension = json.addresses[0].extension;
@@ -177,14 +231,18 @@ function callApi() {
         //   extension = json.addresses[1].extension;
         // }
       }
+
+      let license = "-";
+
       console.log(
-        "\n" +"id: " + id,
+        "\n" + "id: " + id,
         "\n" + "name: " + name,
         "\n" + "state: " + state,
         "\n" + "department: " + department,
         "\n" + "address: " + email,
         "\n" + "manager: " + manager,
-        "\n" + "extension: " + extension 
+        "\n" + "extension: " + extension,
+        "\n" + "license: " + license
       );
 
       let post = new PostUsers(
@@ -194,13 +252,28 @@ function callApi() {
         department,
         email,
         manager,
-        extension
+        extension,
+        license
       );
       post = post.saveUsers();
     });
   }
+  function dbInsertLicense(jsonResponse) {
+    // console.log(jsonResponse);
+    jsonResponse.entities.map((json) => {
+      let { id } = json;
 
-  setTimeout(callApi, 600000);
+      let license = json.licenses[0];
+
+      console.log("\n" + "id: " + id, "\n" + "license: " + license);
+
+      let post = new PostLicenses(id, license);
+      post = post.saveLicenses();
+    });
+  }
+
+  setTimeout(getLicense, 7000);
+  setTimeout(getManagers, 12000);
 }
 
 callApi();

@@ -3,6 +3,8 @@ import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import Table from "./TableContainer";
 import { useTable } from "react-table";
+import "./licensas-genesys.css";
+import { SelectColumnFilter } from "./Filter";
 
 export default function LicensasGenesys() {
   const [data, setData] = useState([]);
@@ -23,52 +25,50 @@ export default function LicensasGenesys() {
       })
       .then((jsonResponse) => {
         console.log(jsonResponse);
-        setData(jsonResponse);
+        setData(jsonResponse.users);
       });
     console.log("data: " + data.users);
   }, []);
 
-  const columns = useMemo(
-    () => [
-      {
-        Header: "Users Genesys",
-        columns: [
-          {
-            Header: "Nome",
-            accessor: "users.name"
-          },
-          {
-            Header: "estado",
-            accessor: "users.state"
-          },
-          {
-            Header: "Departmento",
-            accessor: "users.department"
-          },
-          {
-            Header: "Gerente",
-            accessor: "users.manager",
-          },
-          {
-            Header: "Ultimo Login",
-            accessor: "users.lastlogin",
-          },
-          {
-            Header: "Ramal",
-            accessor: "users.address",
-          },
-          {
-            Header: "licensa",
-            accessor: "users.license",
-          },
-          
-        ]
-      }
-    ]
-  )
+  const columns = useMemo(() => [
+    {
+      Header: "Nome",
+      accessor: "name",
+    },
+    {
+      Header: "Estado",
+      accessor: "state",
+      Filter: SelectColumnFilter,
+      filter: "includes",
+    },
+    {
+      Header: "Departmento",
+      accessor: "department",
+    },
+    {
+      Header: "Gerente",
+      accessor: "manager",
+    },
+    // {
+    //   Header: "Ultimo Login",
+    //   accessor: "lastlogin",
+    // },
+    {
+      Header: "Ramal",
+      accessor: "extension",
+    },
+    {
+      Header: "Tipo de Licença",
+      accessor: "license",
+      Filter: SelectColumnFilter,
+      filter: "includes",
+    },
+  ]);
 
-  return <div>
-      <h1>Teste Tabela</h1>
-      <Table columns={columns} data={data} />
-  </div>;
+  return (
+    <div className="Table">
+      <h1>Licenças Genesys</h1>
+      <Table className="content-table" columns={columns} data={data} />
+    </div>
+  );
 }
