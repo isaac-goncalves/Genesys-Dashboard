@@ -1,6 +1,7 @@
 require("dotenv").config();
 const PostUsers = require("./backend/models/Users");
 const PostLicenses = require("./backend/models/Licenses");
+const PostExtensions = require("./backend/models/Extensions");
 const db = require("./backend/config/db");
 const nodemailer = require("nodemailer");
 const express = require("express");
@@ -8,6 +9,7 @@ const app = express();
 const fetch = require("node-fetch");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const platformClient = require("purecloud-platform-client-v2");
 var jsonParser = bodyParser.json();
 
 var state = {
@@ -107,7 +109,8 @@ function callApi() {
     .then((jsonResponse) => {
       // console.log(jsonResponse);
       jsondata = jsonResponse;
-      getUsers(jsonResponse);
+      // Start the first function getUsers(jsonResponse);
+      getExtensions(jsonResponse);
     })
     .catch((e) => console.error(e));
 
@@ -211,6 +214,67 @@ function callApi() {
     console.log("Managers atualizados!");
   };
 
+  const getExtensions = async (body) => {
+    console.log("Limpando o Banco");
+    let queryCleanTable = `TRUNCATE TABLE extensions;`;
+    db.execute(queryCleanTable);
+
+    const queryGetExtensions = await PostExtensions.findExtensionRanges();
+    console.log(queryGetExtensions[0]);
+
+    extensionRanges = queryGetExtensions[0];
+
+    extensionRanges.map((e) => {
+      startValue = e.start;
+      endValue = e.end;
+      prefixValue = e.prefix
+      console.log("Start Extension Filling")
+      
+      for( let i = startValue; i <= endValue; i++)
+      {
+        console.log("prefix: " + prefixValue + " end: " + i + "\n");
+      }
+      
+    });
+
+    const client = platformClient.ApiClient.instance;
+    client.setEnvironment(platformClient.PureCloudRegionHosts.us_east_1); // Genesys Cloud region
+
+    // Manually set auth token or use loginImplicitGrant(...) or loginClientCredentialsGrant(...)
+    client.setAccessToken(body.access_token);
+
+    let apiInstance = new platformClient.TelephonyProvidersEdgeApi();
+
+    var varPageNumber = 1;
+    var varpageCount = 6;
+    do {
+      console.log(varPageNumber);
+
+      let opts = {
+        pageSize: 100, // Number | Page size
+        pageNumber: varPageNumber, // Number | Page number
+        sortBy: "number", // String | Sort by
+        sortOrder: "ASC", // String | Sort order
+      };
+
+      // Get a listing of extensions
+      apiInstance
+        .getTelephonyProvidersEdgesExtensions(opts)
+        .then((jsonResponse) => {
+          // console.log(jsonResponse);
+          varpageCount = jsonResponse.pageCount;
+          dbInsertExtensions(jsonResponse);
+        })
+        .catch((err) => {
+          console.log(
+            "There was a failure calling getTelephonyProvidersEdgesExtensions"
+          );
+          console.error(err);
+        });
+      varPageNumber++;
+    } while (varPageNumber <= varpageCount);
+  };
+
   function dbInsertUsers(jsonResponse) {
     jsonResponse.results.map((json) => {
       let { id, name, state, email } = json;
@@ -271,9 +335,31 @@ function callApi() {
       post = post.saveLicenses();
     });
   }
+  function dbInsertExtensions(jsonResponse) {
+    // console.log(jsonResponse);
+    jsonResponse.entities.map((json) => {
+      let { state, number, ownerType } = json;
 
-  setTimeout(getLicense, 7000);
-  setTimeout(getManagers, 12000);
+      let userid = json.owner.id;
+      let name = json.owner.name;
+
+      // console.log(
+      //   "\n" + "userid: " + userid,
+      //   "\n" + "name: " + name,
+      //   "\n" + "state: " + state,
+      //   "\n" + "number: " + number,
+      //   "\n" + "ownerType: " + ownerType,
+      //   "\n" + "\n" + "---------------------------------"
+      // );
+
+      let post = new PostExtensions(userid, name, state, number, ownerType);
+      post = post.saveExtensions();
+    });
+  }
+
+  //Callback to the other functions
+  // setTimeout(getLicense, 7000);
+  // setTimeout(getManagers, 12000);
 }
 
 callApi();

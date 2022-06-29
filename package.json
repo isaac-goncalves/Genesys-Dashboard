@@ -23,6 +23,7 @@
     "nodemailer": "^6.7.4",
     "nodemailer-react": "^1.0.2",
     "nodemon": "^2.0.16",
+    "purecloud-platform-client-v2": "^140.0.0",
     "react": "^18.0.0",
     "react-chartjs-2": "^4.1.0",
     "react-dom": "^18.0.0",
@@ -38,8 +39,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "server": "nodemon Server.js"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

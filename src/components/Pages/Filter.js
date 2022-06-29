@@ -1,6 +1,10 @@
 import { React, useMemo, useState } from "react";
 import { useAsyncDebounce } from "react-table";
-import { Label, Input } from "reactstrap";
+import { Label } from "reactstrap";
+import Input from "@mui/material/Input";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
 
 // Component for Global Filter
 export function GlobalFilter({ globalFilter, setGlobalFilter }) {
@@ -12,7 +16,7 @@ export function GlobalFilter({ globalFilter, setGlobalFilter }) {
 
   return (
     <div className="search-field">
-      <Label >Pesquisar na tabela: </Label>
+      <Label>Pesquisar na tabela: </Label>
       <Input
         value={value || ""}
         onChange={(e) => {
@@ -20,7 +24,7 @@ export function GlobalFilter({ globalFilter, setGlobalFilter }) {
           onChange(e.target.value);
         }}
         placeholder="Pesquisar"
-        className="w-30"
+        className="w-25"
         style={{
           fontSize: "1.1rem",
           margin: "15px",
@@ -67,18 +71,22 @@ export function SelectColumnFilter({
 
   // UI for Multi-Select box
   return (
-    <select
-      value={filterValue}
-      onChange={(e) => {
-        setFilter(e.target.value || undefined);
-      }}
-    >
-      <option value="">All</option>
-      {options.map((option, i) => (
-        <option key={i} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
+    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+      <Select
+        className="select-options"
+        value={filterValue}
+        onChange={(e) => {
+          setFilter(e.target.value || undefined);
+        }}
+        label="Search"
+      >
+        <MenuItem value="">All</MenuItem>
+        {options.map((option, i) => (
+          <MenuItem key={i} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   );
 }
