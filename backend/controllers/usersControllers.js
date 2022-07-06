@@ -1,3 +1,4 @@
+const { callbackPromise } = require("nodemailer/lib/shared");
 const PostUsers = require("../models/Users");
 
 exports.getAllUsers = async (req, res, next) => {
@@ -9,3 +10,5 @@ exports.getAllUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+

@@ -12,7 +12,7 @@ class PostUsers {
     this.license = license;
   }
   saveUsers() {
-    console.log("inserido no Banco!");
+    // console.log("inserido no Banco!");
     let sql = `
     INSERT INTO
     users(

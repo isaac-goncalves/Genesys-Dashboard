@@ -6,7 +6,7 @@ class PostLicenses {
     this.license = license;
   }
   saveLicenses() {
-    console.log("inserido no Banco!");
+    // console.log("inserido no Banco!");
     let sql = `
     UPDATE users
     SET license = '${this.license}'
