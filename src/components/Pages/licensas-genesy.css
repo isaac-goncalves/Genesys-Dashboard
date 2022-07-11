@@ -82,14 +82,17 @@ table thead tr {
   font-weight: bold;
   font-size: 1rem;
 }
-table thead tr:nth-child(2) {
-  box-shadow: 0 3px 5px #c0c0c0;
+table thead tr:nth-child(1) {
+  box-shadow: 0 3px 3px #bebdbd;
   background-color: rgba(233, 231, 231, 0.842);
-
+  margin-bottom: 10px;
 }
 table th,
 table td {
   padding: 12px 15px;
+}
+table td {
+  text-align: center;
 }
 table tbody tr {
   border-bottom: 1px solid #dddddd;
@@ -101,15 +104,14 @@ table tbody tr:last-of-type {
   border-bottom: 2px solid rgb(236, 236, 236);
 }
 .header-group {
-  font-size: 1.1rem;
+  font-size: 1.0rem;
 }
 tbody tr:hover {
   color: #000000;
-  background-color: #d4d4d4;
+  background-color: #e6e3e3;
   cursor: pointer;
 }
 input {
- 
   /* box-sizing: border-box;
 width: 190px;
 height: 25px;
@@ -127,24 +129,21 @@ color: black
 {
     border-collapse: collapse;
     min-width: 400px;
+    max-width: 1360px;
     font-size: 1em;
     color: black;
     font-weight: 600;
     font-size: 0.9rem;
-    border-radius: 5px 5px 0 0;
     overflow: hidden;
-
 }
-
 .table-container thead tr {
   text-align: left;
   font-weight: bold;
   font-size: 1rem;
 }
-.table-container thead tr:nth-child(2) {
+.table-container thead tr:nth-child(1) {
   box-shadow: 0 3px 5px #c0c0c0;
   background-color: rgba(233, 231, 231, 0.842);
-
 }
 .table-container th,
 .table-container td {
@@ -153,12 +152,11 @@ color: black
 .table-container tbody tr {
   border-bottom: 1px solid #dddddd;
 }
-
 .table-container tbody tr:last-of-type {
   border-bottom: 2px solid rgb(236, 236, 236);
 }
 .table-container th{
-  background-color: rgba(233, 231, 231, 0.842);
+  background-color: rgba(233, 231, 231 / 0.13)
 }
 .Ativo{
 color: green
@@ -170,6 +168,40 @@ color: green
 
 .Desativados{
 color: rgb(155, 155, 36);
+}
+
+.table-container td:nth-of-type(2) {
+  text-align: center;
+}
+.header-container{
+  max-width: 1360px;
+  padding-bottom: 15px;
+  border-radius: 5px;
+  box-shadow: 0 3px 5px #c0c0c0;
+}
+.search-field {
+  margin-top: 8px;
+  margin-bottom: -5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  max-width: 1360px;
+  height: 60px;
+}
+.search-field :nth-child(1){
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000000;
+}
+.progress-icon{
+  position: fixed; /* or absolute */
+  top: 360px;
+  left: 620px;
+}
+
+.select-options{
+  margin-left: -9px;
 }
 
 

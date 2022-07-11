@@ -41,7 +41,8 @@ class PostExtensions {
     return db.execute(sql);
   }
   static findExtensions() {
-    let sql = `SELECT * FROM extensions;`;
+    let sql = `SELECT * FROM extensionsfrontends
+    ORDER BY end;`;
     return db.execute(sql);
   }
 }

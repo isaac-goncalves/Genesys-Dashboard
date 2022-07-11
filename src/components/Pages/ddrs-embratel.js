@@ -4,11 +4,33 @@ import { SelectColumnFilter } from "./Filter";
 import Table from "./TableContainer";
 import "./ddrs-embratel.css";
 
+import CircularProgress from '@mui/material/CircularProgress';
+
+
 export default function DDrsEmbratel() {
   const [data, setData] = useState([]);
+  const [isLoaded, setIsloaded] = useState(false);
+  var [avaliableDDRS, setAvaliableDDRS] = useState(0)
+  var [usedDDRS, setUsedDDRS] = useState(0)
+
+var valorAvaliable = 0
+var valorUsed = 0 
+
+function calculateAvaliableDDRS(data) {
+for (let i = 0; i < data.length; i++) {
+      if (data[i].state == "Em Uso") {
+        valorAvaliable++;
+      }
+      if (data[i].state == "-") {
+        valorUsed++;
+      }
+    }
+    setAvaliableDDRS(valorAvaliable)
+    setUsedDDRS(valorUsed)
+}
 
   useEffect(() => {
-    fetch(`http://localhost:4000/get_extensionstable`, {
+    fetch(`http://136.166.35.153:4010/get_extensionstable`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -23,7 +45,9 @@ export default function DDrsEmbratel() {
       })
       .then((jsonResponse) => {
         console.log(jsonResponse);
+        calculateAvaliableDDRS(jsonResponse.extensions)
         setData(jsonResponse.extensions);
+        setIsloaded(true)
       });
     console.log("data: " + data.extensions);
   }, []);
@@ -59,6 +83,7 @@ export default function DDrsEmbratel() {
     },
   ]);
 
+  if(isLoaded){
   return (
     <div className="Table">
       <div className="header-container">
@@ -73,11 +98,11 @@ export default function DDrsEmbratel() {
           <tbody>
             <tr>
               <td className="Ativo">Disponiveis</td>
-              <td>153</td>
+              <td>{avaliableDDRS}</td>
             </tr>
             <tr>
               <td className="Deletados">Em uso</td>
-              <td>256</td>
+              <td>{usedDDRS}</td>
             </tr>
           </tbody>
         </div>
@@ -85,4 +110,35 @@ export default function DDrsEmbratel() {
       <Table className="content-table" columns={columns} data={data} />
     </div>
   );
+  }
+  else {
+  return(
+    <div className="Table">
+    <div className="header-container">
+      <h1>DDRS Embratel</h1>
+      <div className="table-container">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Quantidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="Ativo">Disponiveis</td>
+            <td>{avaliableDDRS}</td>
+          </tr>
+          <tr>
+            <td className="Deletados">Em uso</td>
+            <td>{usedDDRS}</td>
+          </tr>
+        </tbody>
+      </div>
+    </div>
+    <div className="progress-icon">
+          <CircularProgress />
+        </div>
+  </div>
+  )
+  }
 }

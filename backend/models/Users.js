@@ -40,7 +40,8 @@ class PostUsers {
   }
 
   static findAll() {
-    let sql = `SELECT * FROM users;`;
+    let sql = `SELECT * FROM usersfrontends
+    ORDER BY name;`;
     return db.execute(sql);
   }
 }

@@ -74,11 +74,12 @@ export function SelectColumnFilter({
     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
       <Select
         className="select-options"
-        value={filterValue}
+        
         onChange={(e) => {
           setFilter(e.target.value || undefined);
         }}
         label="Search"
+        value={filterValue}
       >
         <MenuItem value="">All</MenuItem>
         {options.map((option, i) => (
