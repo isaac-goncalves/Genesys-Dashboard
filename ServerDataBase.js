@@ -9,10 +9,12 @@ const PostExtensionsRanges = require("./backend/models/ExtensionsRanges");
 const Users = require("./sequelize/models/users");
 const ExtensionsRanges = require("./sequelize/models/extensionranges");
 const sequelize = require("./sequelize/db/database");
+const Usernames = require("./sequelize/models/usernames");
 
 const nodemailer = require("nodemailer");
 const express = require("express");
 const app = express();
+
 const fetch = require("node-fetch");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -21,6 +23,37 @@ var jsonParser = bodyParser.json();
 const clientId = process.env.REACT_APP_GENESYS_CLOUD_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_GENESYS_CLOUD_CLIENT_SECRET;
 const environment = process.env.REACT_APP_GENESYS_CLOUD_ENVIRONMENT;
+
+//USER LOGIN ------------------------
+app.use(express.json());
+
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  console.log("Requested");
+  console.log(username, password);
+
+  Usernames.findOne({
+    where: {
+      username: username,
+      password: password,
+    },
+  }).then((result) => {
+    if (result) {
+      res.send(result);
+      console.log(result);
+    } else {
+      res.send({ message: "Wrong username/password combination!" });
+    }
+  });
+
+  // db.query("SELECT * FROM usernames WHERE username = ? AND password = ?", [
+  //   username,
+  //   password,
+  // ]);
+});
+
+//USER LOGIN ------------------------
 
 var state = {
   items: [],
@@ -121,13 +154,13 @@ async function callApi() {
       let queryCleanTable = `TRUNCATE TABLE extensions;`;
       db.execute(queryCleanTable); //Apaga o que tudo ja tem no banco com a query acimaF
 
-      await getUsers(jsonResponse);
-      await getExtensions(jsonResponse);
+      // await getUsers(jsonResponse);
+      // await getExtensions(jsonResponse);
     })
     .catch((e) => console.error(e));
   //Callback to the other functions
 
-  setTimeout(callApi, 90000);
+  // setTimeout(callApi, 90000);
 }
 
 callApi();

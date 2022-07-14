@@ -66,8 +66,8 @@ app.get("/get_edge_status", async (req, res) => {
 app.use("/get_userstable", require("./backend/routes/usersRoutes"));
 app.use("/get_extensionstable", require("./backend/routes/extensionsRoutes"));
 
-app.listen(4000, () => {
-  console.log("server is Running on 4000");
+app.listen(4010, () => {
+  console.log("server is Running on 4010");
 });
 
 async function callApi() {
@@ -116,13 +116,23 @@ async function callApi() {
     .then(async (jsonResponse) => {
       jsondata = jsonResponse;
       // Start the first function
-      let queryCleanuserstablesTable = `TRUNCATE TABLE userstables;`;
-      await db.execute(queryCleanuserstablesTable); //Apaga o que tudo ja tem no banco com a query acimaF
-      let queryCleanTable = `TRUNCATE TABLE extensions;`;
-      db.execute(queryCleanTable); //Apaga o que tudo ja tem no banco com a query acimaF
 
-      await getUsers(jsonResponse);
-      await getExtensions(jsonResponse);
+      await sequelize.query(
+        `
+      TRUNCATE TABLE userstables;
+      `
+      );
+      await sequelize.query(
+        `
+      TRUNCATE TABLE extensions;      `
+      );
+
+      // let queryCleanuserstablesTable = `TRUNCATE TABLE userstables;`;
+      //  let queryCleanTable = `TRUNCATE TABLE extensions;`;
+      //  await db.execute(queryCleanuserstablesTable); //Apaga o que tudo ja tem no banco com a query acimaF
+      // await db.execute(queryCleanTable); //Apaga o que tudo ja tem no banco com a query acimaF
+      getUsers(jsonResponse);
+      getExtensions(jsonResponse);
     })
     .catch((e) => console.error(e));
   //Callback to the other functions
@@ -318,18 +328,20 @@ const copyusers = async () => {
 const getExtensions = async (body) => {
   // console.log("Limpando o Banco");
 
+
+  
   const queryGetExtensions = await PostExtensions.findExtensionRanges();
 
   extensionRanges = queryGetExtensions[0];
 
-  extensionRanges.map((e) => {
-    // pra cada entrada de range da tabela ele vai fazer a função  abaixo
+  extensionRanges.map(async (e) => {
+    // pra cada entrada de range da tabela ele vai fazer a funÃ§Ã£o  abaixo
     startValue = e.start;
     endValue = e.end;
     prefixValue = e.prefix; // pega os valores que voltaram do banco e atribui variaveis
 
     for (let i = startValue; i <= endValue; i++) {
-      dbInsertExtensionsRanges(prefixValue, i);
+      await dbInsertExtensionsRanges(prefixValue, i);
     }
   });
 
@@ -473,7 +485,7 @@ async function dbInsertLicense(jsonResponse) {
   });
 }
 async function dbInsertExtensionsRanges(prefix, end) {
-  console.log("\n" + "prefix: " + prefix, "\n" + "end: " + end);
+  // console.log("\n" + "prefix: " + prefix, "\n" + "end: " + end);
   let post = new PostExtensionsRanges(prefix, end);
   post = await post.saveExtensionsRanges();
 }

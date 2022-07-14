@@ -5,6 +5,8 @@ import Input from "@mui/material/Input";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import InputLabel from '@mui/material/InputLabel';
+
 
 // Component for Global Filter
 export function GlobalFilter({ globalFilter, setGlobalFilter }) {
@@ -72,14 +74,15 @@ export function SelectColumnFilter({
   // UI for Multi-Select box
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+       <InputLabel>Filtro</InputLabel>
       <Select
         className="select-options"
-        
+        label="Filtro"
+        value={filterValue}
         onChange={(e) => {
           setFilter(e.target.value || undefined);
         }}
-        label="Search"
-        value={filterValue}
+        
       >
         <MenuItem value="">All</MenuItem>
         {options.map((option, i) => (
