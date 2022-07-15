@@ -154,8 +154,8 @@ async function callApi() {
       let queryCleanTable = `TRUNCATE TABLE extensions;`;
       db.execute(queryCleanTable); //Apaga o que tudo ja tem no banco com a query acimaF
 
-      // await getUsers(jsonResponse);
-      // await getExtensions(jsonResponse);
+      await getUsers(jsonResponse);
+      await getExtensions(jsonResponse);
     })
     .catch((e) => console.error(e));
   //Callback to the other functions

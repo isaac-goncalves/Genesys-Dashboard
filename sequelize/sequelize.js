@@ -6,10 +6,11 @@ const Extensions = require("./models/extensions");
 const ExtensionsFrontend = require("./models/extensionsfrontend");
 const ExtensionsRanges = require("./models/extensionranges");
 const Managers = require("./models/managers");
+const Usernames = require("./models/usernames");
 
 
-
-sequelize.sync({force: true}).then((result) => {
+// {force: true}
+sequelize.sync().then((result) => {
     console.log(result)
 })
 .catch((err) =>{

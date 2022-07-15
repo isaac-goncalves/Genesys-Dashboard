@@ -5,6 +5,7 @@ import Table from "./TableContainer";
 import { useTable } from "react-table";
 import "./licensas-genesy.css";
 import { SelectColumnFilter } from "./Filter";
+import Button from "@mui/material/Button";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -17,8 +18,10 @@ export default function LicensasGenesys() {
   var [CX3Users, setCX3Users] = useState(0);
   var [preditiveEngUsers, setpreditiveEngUsers] = useState(0);
   var [communicateUsers, setcommunicateUsers] = useState(0);
+
   const [isLoggedin, setIsLoggedin] = useState(false);
-  var [loginStatus, setLoginStatus] = useState();
+  const [loginStatus, setLoginStatus] = useState();
+  const [loginStatusMessage, setLoginStatusMessage] = useState();
 
   var valordeAtivos = 0;
   var valordeDeleted = 0;
@@ -69,6 +72,20 @@ export default function LicensasGenesys() {
   }
 
   useEffect(() => {
+    const loggedInUser = localStorage.getItem("user");
+    console.log("Stored User: " + loggedInUser);
+    if (loggedInUser) {
+      const foundUser = JSON.parse(loggedInUser);
+      console.log(foundUser);
+      // const stringefied = JSON.parse(foundUser);
+      // console.log(stringefied)
+      setIsLoggedin(true);
+      setLoginStatus(foundUser.username);
+      fetchData();
+    }
+  }, []);
+
+  function fetchData() {
     fetch(`http://136.166.35.153:4010/get_userstable`, {
       method: "GET",
       headers: {
@@ -89,7 +106,7 @@ export default function LicensasGenesys() {
         setIsloaded(true);
       });
     console.log("data: " + data.users);
-  }, []);
+  }
 
   const columns = useMemo(() => [
     {
@@ -126,6 +143,15 @@ export default function LicensasGenesys() {
     },
   ]);
 
+  function logout() {
+    localStorage.removeItem("user");
+    setLoginStatus("");
+    setIsLoggedin(false);
+    setLoginStatusMessage();
+    window.location.reload(false);
+    setIsloaded(false);
+  }
+
   function LoginForm(props) {
     const Loggedin = props.isLogged;
 
@@ -139,10 +165,13 @@ export default function LicensasGenesys() {
         password: password,
       }).then((response) => {
         if (response.data.message) {
-          setLoginStatus(response.data.message);
+          setLoginStatusMessage(response.data.message);
         } else {
           setIsLoggedin(true);
           setLoginStatus(response.data.username);
+          const userStringfy = response.data;
+          localStorage.setItem("user", JSON.stringify(userStringfy));
+          fetchData();
         }
         console.log(response);
       });
@@ -152,7 +181,7 @@ export default function LicensasGenesys() {
     var [password, setPassword] = useState("");
 
     if (Loggedin == false) {
-      console.log("Nologindetected");
+      console.log("No login detected");
       return (
         <div className="form modal-wrapper">
           <form onSubmit={login}>
@@ -181,11 +210,18 @@ export default function LicensasGenesys() {
               {/* {renderErrorMessage("pass")} */}
             </div>
             <div className="button-container">
-              <button type="sumbit" value="Login">
+             
+              <Button
+                type="sumbit"
+                value="Login"
+                sx={{ color: "Black", borderColor: "Black" }}
+                className="logout-button"
+                variant="outlined"
+              >
                 Login
-              </button>
+              </Button>
             </div>
-            <p>{loginStatus}</p>
+            <p>{loginStatusMessage}</p>
           </form>
         </div>
       );
@@ -195,8 +231,16 @@ export default function LicensasGenesys() {
   if (isLoaded && isLoggedin) {
     return (
       <div>
-        <div classname="Login-Status">
+        <div className="login-status">
           <p>{loginStatus}</p>
+          <Button
+            onClick={logout}
+            sx={{ color: "white", borderColor: "white" }}
+            className="logout-button"
+            variant="outlined"
+          >
+            Logout
+          </Button>
         </div>
         <div className="header-container">
           <h1>Licenças Genesys</h1>
@@ -252,7 +296,7 @@ export default function LicensasGenesys() {
     return (
       <>
         <div className="header-container">
-          <p>{loginStatus}</p>
+          <div className="login-status"></div>
           <h1>Licenças Genesys</h1>
           <div className="table-container">
             <thead>

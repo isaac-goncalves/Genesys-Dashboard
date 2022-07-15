@@ -74,7 +74,7 @@ table {
   color: black;
   font-weight: 600;
   font-size: 0.9rem;
- 
+
   overflow: hidden;
 }
 table thead tr {
@@ -104,11 +104,18 @@ table tbody tr:last-of-type {
   border-bottom: 2px solid rgb(236, 236, 236);
 }
 .header-group {
-  font-size: 1.0rem;
+  font-size: 1rem;
 }
-.header-group:nth-child(3){
-  background-color: #01d28e;
+
+.header-group th:nth-child(2) div {
+  margin-top: 1.5px;
+  margin-bottom: -0.5px;
 }
+.header-group th:nth-child(6) div {
+  margin-top: 2px;
+  margin-bottom: -1px;
+}
+
 tbody tr:hover {
   color: #000000;
   background-color: #e6e3e3;
@@ -121,23 +128,22 @@ height: 25px;
 font-size: 1rem;
 box-shadow: 2px 2px 5px #c0c0c0; */
 }
-.select-options{
-color: black
+.select-options {
+  color: black;
 }
-.header-container{
+.header-container {
   display: flex;
   justify-content: space-between;
 }
-.table-container 
-{
-    border-collapse: collapse;
-    min-width: 400px;
-    max-width: 1360px;
-    font-size: 1em;
-    color: black;
-    font-weight: 600;
-    font-size: 0.9rem;
-    overflow: hidden;
+.table-container {
+  border-collapse: collapse;
+  min-width: 400px;
+  max-width: 1360px;
+  font-size: 1em;
+  color: black;
+  font-weight: 600;
+  font-size: 0.9rem;
+  overflow: hidden;
 }
 .table-container thead tr {
   text-align: left;
@@ -158,25 +164,25 @@ color: black
 .table-container tbody tr:last-of-type {
   border-bottom: 2px solid rgb(236, 236, 236);
 }
-.table-container th{
-  background-color: rgba(233, 231, 231 / 0.13)
+.table-container th {
+  background-color: rgba(233, 231, 231 / 0.13);
 }
-.Ativo{
-color: green
+.Ativo {
+  color: green;
 }
 
-.Deletados{
-  color : rgb(182, 0, 0);
-  }
+.Deletados {
+  color: rgb(182, 0, 0);
+}
 
-.Desativados{
-color: rgb(155, 155, 36);
+.Desativados {
+  color: rgb(155, 155, 36);
 }
 
 .table-container td:nth-of-type(2) {
   text-align: center;
 }
-.header-container{
+.header-container {
   max-width: 1360px;
   padding-bottom: 15px;
   border-radius: 5px;
@@ -192,26 +198,24 @@ color: rgb(155, 155, 36);
   max-width: 1360px;
   height: 60px;
 }
-.search-field :nth-child(1){
+.search-field :nth-child(1) {
   font-size: 1rem;
   font-weight: 600;
   color: #000000;
 }
-.progress-icon{
+.progress-icon {
   position: fixed; /* or absolute */
   top: 360px;
   left: 620px;
 }
 
-.select-options{
+.select-options {
   margin-left: -9px;
 }
 
-
-.modal-wrapper 
-input[type="text"],
+.modal-wrapper input[type="text"],
 input[type="password"] {
-  height: 30px ;
+  height: 30px;
   border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
@@ -235,7 +239,6 @@ input[type="password"] {
 }
 
 .login-form {
-
   background-color: white;
   padding: 2rem;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -255,7 +258,7 @@ input[type="password"] {
   margin-bottom: 20px;
 }
 
-.input-container { 
+.input-container {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -273,26 +276,34 @@ input[type="password"] {
   opacity: 1;
 }
 
-.modal-wrapper form{
+.modal-wrapper form {
   width: min(300px, 90%);
+  height: min(300px, 90%);
   background: white;
-  margin: auto;
+  margin: 200px auto;
   border-radius: 5px;
   font-family: "Poppins", sans-serif;
   text-align: center;
   padding: 30px;
 }
-.modal-wrapper label, p {
+.modal-wrapper label,
+p {
   font-size: larger;
   color: #000000;
 }
-
-.Login-Status p{
-  position: absolute;
-  color:white;
-  size: 500px;
-  top: 15px;
-  left: 40px;
+.login-status p {
+  color: white;
+  font-weight: 500;
+  margin-right: 20px;
 }
 
-
+.login-status {
+  align-items: center;
+  display: flex;
+  position: fixed;
+  color: white;
+  font-weight: 500;
+  top: 12px;
+  right: 40px;
+  z-index: 1101;
+}

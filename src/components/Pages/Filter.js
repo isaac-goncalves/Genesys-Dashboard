@@ -76,7 +76,9 @@ export function SelectColumnFilter({
     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
        <InputLabel>Filtro</InputLabel>
       <Select
+      labelId="demo-select-small"
         className="select-options"
+        
         label="Filtro"
         value={filterValue}
         onChange={(e) => {
