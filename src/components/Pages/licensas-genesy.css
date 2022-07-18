@@ -213,25 +213,12 @@ box-shadow: 2px 2px 5px #c0c0c0; */
   margin-left: -9px;
 }
 
-.modal-wrapper input[type="text"],
+/* .modal-wrapper input[type="text"],
 input[type="password"] {
   height: 30px;
   border: 1px solid rgba(0, 0, 0, 0.2);
-}
+} */
 
-.modal-wrapper button[type="submit"] {
-  margin-top: 10px;
-  cursor: pointer;
-  font-size: 15px;
-  background: #1c7e5d;
-  border: 3px solid #01d28e;
-  color: #fff;
-  padding: 10px 20px;
-}
-
-.modal-wrapper button[type="submit"]:hover {
-  background: #6cf0c2;
-}
 
 .button-container {
   display: flex;
@@ -261,8 +248,10 @@ input[type="password"] {
 .input-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   margin: 10px;
+  font-size: 0.8rem;
+  
 }
 
 .modal-wrapper {
@@ -278,10 +267,10 @@ input[type="password"] {
 
 .modal-wrapper form {
   width: min(300px, 90%);
-  height: min(300px, 90%);
+  height: min(360px, 90%);
   background: white;
-  margin: 200px auto;
-  border-radius: 5px;
+  margin: 110px auto;
+  border-radius: 4px;
   font-family: "Poppins", sans-serif;
   text-align: center;
   padding: 30px;
@@ -294,6 +283,7 @@ p {
 .login-status p {
   color: white;
   font-weight: 500;
+  font-size: 1rem;
   margin-right: 20px;
 }
 
@@ -302,8 +292,24 @@ p {
   display: flex;
   position: fixed;
   color: white;
-  font-weight: 500;
+  
   top: 12px;
-  right: 40px;
+  right: 20px;
   z-index: 1101;
 }
+.login-header h2{
+  color: black;
+  margin: 15px 0;
+}
+.input-container p{
+  color: rgb(173, 50, 50);
+  
+}
+.loginStatusMessage{
+  display: flex;
+  align-items: center;
+  border: 1px solid rgb(173, 50, 50);
+  border-radius: 4px;
+  padding: 5px 2px;
+}
+

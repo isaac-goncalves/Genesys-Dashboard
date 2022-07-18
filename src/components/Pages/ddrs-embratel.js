@@ -4,6 +4,7 @@ import { SelectColumnFilter } from "./Filter";
 import Table from "./TableContainer";
 import "./ddrs-embratel.css";
 import Axios from "axios";
+import Button from "@mui/material/Button";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -16,6 +17,7 @@ export default function DDrsEmbratel() {
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [loginStatus, setLoginStatus] = useState();
   const [loginStatusMessage, setLoginStatusMessage] = useState();
+
   var [username, setUsername] = useState("");
   var [password, setPassword] = useState("");
 
@@ -100,6 +102,15 @@ export default function DDrsEmbratel() {
     },
   ]);
 
+  function logout() {
+    localStorage.removeItem("user");
+    setLoginStatus("");
+    setIsLoggedin(false);
+    setLoginStatusMessage();
+    window.location.reload(false);
+    setIsloaded(false);
+  }
+
   function LoginForm(props) {
     const Loggedin = props.isLogged;
 
@@ -125,7 +136,7 @@ export default function DDrsEmbratel() {
     }
     var [username, setUsername] = useState("");
     var [password, setPassword] = useState("");
-    
+
     if (Loggedin == false) {
       console.log("No login detected");
       return (
@@ -140,7 +151,6 @@ export default function DDrsEmbratel() {
                 onChange={(e) => setUsername(e.target.value)}
                 value={username}
               />
-              {/* {renderErrorMessage("uname")} */}
             </div>
             <div className="input-container">
               <label>Password </label>
@@ -153,12 +163,17 @@ export default function DDrsEmbratel() {
                 }}
                 value={password}
               />
-              {/* {renderErrorMessage("pass")} */}
             </div>
             <div className="button-container">
-              <button type="sumbit" value="Login">
+              <Button
+                type="sumbit"
+                value="Login"
+                sx={{ color: "Black", borderColor: "Black" }}
+                className="logout-button"
+                variant="outlined"
+              >
                 Login
-              </button>
+              </Button>
             </div>
             <p>{loginStatusMessage}</p>
           </form>
@@ -172,6 +187,14 @@ export default function DDrsEmbratel() {
       <div className="Table">
         <div className="login-status">
           <p>{loginStatus}</p>
+          <Button
+            onClick={logout}
+            sx={{ color: "white", borderColor: "white" }}
+            className="logout-button"
+            variant="outlined"
+          >
+            Logout
+          </Button>
         </div>
         <div className="header-container">
           <h1>DDRS Embratel</h1>
@@ -201,7 +224,6 @@ export default function DDrsEmbratel() {
     return (
       <div className="Table">
         <div className="login-status">
-          <p>{loginStatus}</p>
         </div>
         <div className="header-container">
           <h1>DDRS Embratel</h1>

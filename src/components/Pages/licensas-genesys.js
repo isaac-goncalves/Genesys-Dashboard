@@ -2,12 +2,16 @@ import React from "react";
 import { useEffect, useState, useMemo } from "react";
 import Axios from "axios";
 import Table from "./TableContainer";
-import { useTable } from "react-table";
+
 import "./licensas-genesy.css";
 import { SelectColumnFilter } from "./Filter";
 import Button from "@mui/material/Button";
-
+import Avatar from "@mui/material/Avatar";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CircularProgress from "@mui/material/CircularProgress";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 export default function LicensasGenesys() {
   const [data, setData] = useState([]);
@@ -143,6 +147,19 @@ export default function LicensasGenesys() {
     },
   ]);
 
+  function LoginStatus() {
+    {
+      if (loginStatusMessage) {
+        return (
+          <div className="loginStatusMessage">
+            <ErrorOutlineIcon style={{ color: 'red' }}/>
+            <p>{loginStatusMessage}</p>
+          </div>
+        );
+      }
+    }
+  }
+
   function logout() {
     localStorage.removeItem("user");
     setLoginStatus("");
@@ -186,18 +203,32 @@ export default function LicensasGenesys() {
         <div className="form modal-wrapper">
           <form onSubmit={login}>
             <div className="input-container">
-              <label>Username </label>
+              <Grid align="center">
+                <div className="login-header">
+                  <Avatar>
+                    <LockOutlinedIcon />
+                  </Avatar>
+                  <h2>Sign In</h2>
+                </div>
+              </Grid>
+              {/* <label>Username </label>
               <input
                 type="text"
                 name="uname"
                 required
                 onChange={(e) => setUsername(e.target.value)}
                 value={username}
+              /> */}
+              <TextField
+                size="small"
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
+                type="text"
+                label="Username"
+                placeholder="Digite o usuário"
+                fullWidth
               />
-              {/* {renderErrorMessage("uname")} */}
-            </div>
-            <div className="input-container">
-              <label>Password </label>
+              {/* <label>Password </label>
               <input
                 type="password"
                 name="pass"
@@ -206,22 +237,30 @@ export default function LicensasGenesys() {
                   setPassword(e.target.value);
                 }}
                 value={password}
+              /> */}
+              <TextField
+                size="small"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                type="text"
+                label="Password"
+                placeholder="Digite a senha"
+                fullWidth
               />
-              {/* {renderErrorMessage("pass")} */}
+              <div className="button-container">
+                <Button
+                  fullWidth
+                  type="sumbit"
+                  value="Login"
+                  sx={{ color: "Black", borderColor: "Black" }}
+                  className="logout-button"
+                  variant="outlined"
+                >
+                  Login
+                </Button>
+              </div>
+              <LoginStatus />
             </div>
-            <div className="button-container">
-             
-              <Button
-                type="sumbit"
-                value="Login"
-                sx={{ color: "Black", borderColor: "Black" }}
-                className="logout-button"
-                variant="outlined"
-              >
-                Login
-              </Button>
-            </div>
-            <p>{loginStatusMessage}</p>
           </form>
         </div>
       );

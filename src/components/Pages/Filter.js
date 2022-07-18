@@ -78,7 +78,6 @@ export function SelectColumnFilter({
       <Select
       labelId="demo-select-small"
         className="select-options"
-        
         label="Filtro"
         value={filterValue}
         onChange={(e) => {
