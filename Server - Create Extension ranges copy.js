@@ -1,0 +1,65 @@
+const sequelize = require("sequelize");
+const Extensions = require("./sequelize/models/extensionranges")
+const ExtensionsExceptions = require("./sequelize/models/extensionsexceptions")
+
+// sequelize.query ()
+// Extensions.bulkCreate([
+//   { prefix: "3411", start: "3500", end: "3599" },
+//   { prefix: "3411", start: "3600", end: "3699" },
+//   { prefix: "3411", start: "3700", end: "3799" },
+//   { prefix: "3411", start: "3800", end: "3899" },
+//   { prefix: "3411", start: "3900", end: "3999" },
+//   { prefix: "3411", start: "6000", end: "6099" },
+// ]);
+
+ExtensionsExceptions.bulkCreate([
+  { prefix: "3411",end: "3617", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR EW - CARDIF", department: "-"},
+  { prefix: "3411",end: "3622", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR LGC", department: "-"},
+  { prefix: "3411",end: "3645", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR TELEPRESENCE", department: "-"},
+  { prefix: "3411",end: "3646", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR LOJA ONLINE", department: "-"},
+  { prefix: "3411",end: "3647", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR EW", department: "-"},
+  { prefix: "3411",end: "3948", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR PREMIUM", department: "-"},
+  { prefix: "3411",end: "3950", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR B2C", department: "-"},
+  { prefix: "3411",end: "3951", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR B2C", department: "-"},
+  { prefix: "3411",end: "3952", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR OLED", department: "-"},
+  { prefix: "3411",end: "3953", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR RECALL", department: "-"},
+  { prefix: "3411",end: "3955", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR B2B", department: "-"},
+  { prefix: "3411",end: "3956", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR B2B", department: "-"},
+  { prefix: "3411",end: "3957", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR EW - ZURICH", department: "-"},
+  { prefix: "3411",end: "3959", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR DEV", department: "-"},
+  { prefix: "3411",end: "3963", state: "Em uso", userid: "-", ownerType: "IVR", name:"IVR PROCON", department: "-"},
+  { prefix: "3411",end: "3600", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"CONTA OFICIAL LG FACEBOOK", department: "-"},
+  { prefix: "3411",end: "3601", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"EDMAR PEREIRA", department: "D&C"},
+  { prefix: "3411",end: "3603", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"-", department: "CRM Operation / Install AC"},
+  { prefix: "3411",end: "3631", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"NETWORK CRM", department: "NETWORK"},
+  { prefix: "3411",end: "3800", state: "Em uso", userid: "-", ownerType: "Telegram", name:"TELEGRAM", department: "DIGITAL SVC"},
+  { prefix: "3411",end: "3892", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"SUPORTE TECNICO", department: "SUPORTE TÉCNICO"},
+  { prefix: "3411",end: "3901", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"SVC ACADEMY", department: "SUPORTE TÉCNICO"},
+  { prefix: "3411",end: "3903", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"LGC SP", department: "LGC SP"},
+  { prefix: "3411",end: "3909", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"LGC BRASILIA", department: "LGC BR"},
+  { prefix: "3411",end: "3954", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"LGC SP", department: "LGC BA"},
+  { prefix: "3411",end: "3974", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"ORÇAMENTO LGC - KAINOS", department: "NETWORK"},
+  { prefix: "3411",end: "3993", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"RICARDO SILVA/LINHA BRANCA", department: "SUPORTE TÉCNICO"},
+  { prefix: "3411",end: "3999", state: "Em uso", userid: "-", ownerType: "Whatsapp", name:"VOLL X OUTBOUND LGE", department: "SAC"},
+  { prefix: "3411",end: "3500", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3510", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3520", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3530", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3540", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3550", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3560", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3570", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3580", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3590", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3700", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3710", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3720", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3730", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3740", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3750", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3760", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3770", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3780", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"},
+  { prefix: "3411",end: "3790", state: "Reservado", userid: "-", ownerType: "-", name:"-", department: "-"}
+]);
+

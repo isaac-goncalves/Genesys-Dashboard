@@ -267,7 +267,7 @@ input[type="password"] {
 
 .modal-wrapper form {
   width: min(300px, 90%);
-  height: min(360px, 90%);
+  height: min(390px, 90%);
   background: white;
   margin: 110px auto;
   border-radius: 4px;
@@ -294,7 +294,7 @@ p {
   color: white;
   
   top: 12px;
-  right: 20px;
+  right: 15px;
   z-index: 1101;
 }
 .login-header h2{

@@ -5,6 +5,12 @@ import Table from "./TableContainer";
 import "./ddrs-embratel.css";
 import Axios from "axios";
 import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -102,6 +108,19 @@ export default function DDrsEmbratel() {
     },
   ]);
 
+  function LoginStatus() {
+    {
+      if (loginStatusMessage) {
+        return (
+          <div className="loginStatusMessage">
+            <ErrorOutlineIcon style={{ color: "red" }} />
+            <p>{loginStatusMessage}</p>
+          </div>
+        );
+      }
+    }
+  }
+
   function logout() {
     localStorage.removeItem("user");
     setLoginStatus("");
@@ -119,7 +138,7 @@ export default function DDrsEmbratel() {
       console.log("Login function");
       console.log(username);
       console.log(password);
-      Axios.post("http://localhost:4000/login", {
+      Axios.post("http://136.166.35.153:4010/login", {
         username: username,
         password: password,
       }).then((response) => {
@@ -143,39 +162,46 @@ export default function DDrsEmbratel() {
         <div className="form modal-wrapper">
           <form onSubmit={login}>
             <div className="input-container">
-              <label>Username </label>
-              <input
-                type="text"
-                name="uname"
-                required
+              <Grid align="center">
+                <div className="login-header">
+                  <Avatar>
+                    <LockOutlinedIcon />
+                  </Avatar>
+                  <h2>Sign In</h2>
+                </div>
+              </Grid>
+              <TextField
+                size="small"
                 onChange={(e) => setUsername(e.target.value)}
                 value={username}
+                type="text"
+                label="Username"
+                placeholder="Digite o usuário"
+                fullWidth
               />
-            </div>
-            <div className="input-container">
-              <label>Password </label>
-              <input
-                type="password"
-                name="pass"
-                required
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
+              <TextField
+                size="small"
+                onChange={(e) => setPassword(e.target.value)}
                 value={password}
+                type="text"
+                label="Password"
+                placeholder="Digite a senha"
+                fullWidth
               />
+              <div className="button-container">
+                <Button
+                  fullWidth
+                  type="sumbit"
+                  value="Login"
+                  sx={{ color: "Black", borderColor: "Black" }}
+                  className="logout-button"
+                  variant="outlined"
+                >
+                  Login
+                </Button>
+              </div>
+              <LoginStatus />
             </div>
-            <div className="button-container">
-              <Button
-                type="sumbit"
-                value="Login"
-                sx={{ color: "Black", borderColor: "Black" }}
-                className="logout-button"
-                variant="outlined"
-              >
-                Login
-              </Button>
-            </div>
-            <p>{loginStatusMessage}</p>
           </form>
         </div>
       );

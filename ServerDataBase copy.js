@@ -1,16 +1,4 @@
 require("dotenv").config();
-//old db interactions
-const db = require("./backend/config/db");
-const PostUsers = require("./backend/models/Users");
-const PostLicenses = require("./backend/models/Licenses");
-const PostExtensions = require("./backend/models/Extensions");
-const PostExtensionsRanges = require("./backend/models/ExtensionsRanges");
-//new db interactions
-const Users = require("./sequelize/models/users");
-const ExtensionsRanges = require("./sequelize/models/extensionranges");
-const sequelize = require("./sequelize/db/database");
-
-const nodemailer = require("nodemailer");
 const express = require("express");
 const app = express();
 const fetch = require("node-fetch");
@@ -21,89 +9,161 @@ var jsonParser = bodyParser.json();
 const clientId = process.env.REACT_APP_GENESYS_CLOUD_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_GENESYS_CLOUD_CLIENT_SECRET;
 const environment = process.env.REACT_APP_GENESYS_CLOUD_ENVIRONMENT;
+const http = require("http");
 
-var state = {
-  items: [],
-  JsonEdge: [],
-  Edge0PreviousStatuscode: "ACTIVE",
-  Edge1PreviousStatuscode: "ACTIVE",
-  Edge2PreviousStatuscode: "ACTIVE",
-};
-var state2 = {
-  items: [],
-  sendMailtrigger: 5,
-  Trunk0InboundCalls: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  Trunk1InboundCalls: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  Trunk2InboundCalls: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  TimeData: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-};
-global.issueReported = false;
-var jsondata = [];
+const { Server } = require("socket.io");
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+const WebSocket = require("ws");
+const { json } = require("body-parser");
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/get_edge_status", async (req, res) => {
-  res.json({
-    json: {
-      items: state.JsonEdge,
-      Trunk0InboundCalls: state2.Trunk0InboundCalls,
-      Trunk1InboundCalls: state2.Trunk1InboundCalls,
-      Trunk2InboundCalls: state2.Trunk2InboundCalls,
-      TimeData: state2.TimeData,
+let firstChat = true;
+
+activeChats = [];
+
+app.use("/message", async (request, response) => {
+  const { message } = request.body;
+  const { name } = request.body;
+  console.log("We got a hit @ " + new Date());
+  // const activechat = activechats.find((activechats) => activechats.name === name )
+  //   if(!activechat){
+
+  //     // chamar o obj(Token)
+  //   }else{
+  //     return response.satatus(400).json({error: "Costumer not Found"})
+  //   }
+
+  if (message == undefined || name == undefined) {
+    console.log("primeiro request descartado");
+  }
+  if (message != undefined && name != undefined && firstChat == true) {
+    const chatInfo = await createConversationObj(name);
+
+    const conversationID = chatInfo.id;
+    const jwt = chatInfo.jwt;
+    const memberId = chatInfo.member.id;
+    const eventStreamUri = chatInfo.eventStreamUri;
+
+    // const conversationID = "32a5aade-364f-4993-81f1-c59e530dfba0"
+    // const jwt = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjVmYjBkZmQwLTFkMDYtNDQzMi05NGFhLTVmMGQ0MTJhNmI5OSIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImNvbnYiOiIzMmE1YWFkZS0zNjRmLTQ5OTMtODFmMS1jNTllNTMwZGZiYTAiLCJkaWQiOiJiZTM0ZGVlOC1jODIzLTQ4N2ItOThmZS0yYWZhMWYwOGRlMzUiLCJzdWIiOiJjNTE5NzNmZi03MGUzLTRjOWUtOGUzOS0yMzljMjBjMzMzNDMifSwiZXhwIjoxNjU5MDg1NTg2LCJpYXQiOjE2NTkwMTAzNjQsImlzcyI6InVybjpwdXJlY2xvdWQ6d2ViY2hhdCIsIm9yZyI6ImFkYjNlM2VlLTdiYjQtNGUyYS1iNzU0LTE3OGZmOGZjMzU5YiJ9.HsDinpC63xy_WeLvC8wG_AuLXorCweRGwIyo7SVxWfIEEkjeG5tjd1jS0c9MDtBrXiZMMSFBhZ7yLzpsBDfQHmWJv8Th5FN66glH8z0UTp0f1D8ltWsLlnnqe5gkWJi9Vh6yMB-D4BxnVDWUpqZL0sA784U2VqQoe7XEaOHD9MrbUygp-91PF5tD5EiB_ckUaHnf0xsxxa0SA6yVT_3JkFCV4uaSCi6accwjhIigOsOfYvA1iGyYPcGjeaY35_joHQRxVj5eVdV8fRronxa3XjhjC1T-2WlnraUk0pOPS3Z6Lf_P9b1XHvIFLmf2EtsKQN2X-_MZp9fA00Hhd5X-yg"
+    // const memberId = "c51973ff-70e3-4c9e-8e39-239c20c33343"
+    // const eventStreamUri = "wss://streaming.mypurecloud.com/chat/jwt/eyJhbGciOiJSUzI1NiIsImtpZCI6IjVmYjBkZmQwLTFkMDYtNDQzMi05NGFhLTVmMGQ0MTJhNmI5OSIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImNvbnYiOiIzMmE1YWFkZS0zNjRmLTQ5OTMtODFmMS1jNTllNTMwZGZiYTAiLCJkaWQiOiJiZTM0ZGVlOC1jODIzLTQ4N2ItOThmZS0yYWZhMWYwOGRlMzUiLCJzdWIiOiJjNTE5NzNmZi03MGUzLTRjOWUtOGUzOS0yMzljMjBjMzMzNDMifSwiZXhwIjoxNjU5MDg1NTg2LCJpYXQiOjE2NTkwMTAzNjQsImlzcyI6InVybjpwdXJlY2xvdWQ6d2ViY2hhdCIsIm9yZyI6ImFkYjNlM2VlLTdiYjQtNGUyYS1iNzU0LTE3OGZmOGZjMzU5YiJ9.HsDinpC63xy_WeLvC8wG_AuLXorCweRGwIyo7SVxWfIEEkjeG5tjd1jS0c9MDtBrXiZMMSFBhZ7yLzpsBDfQHmWJv8Th5FN66glH8z0UTp0f1D8ltWsLlnnqe5gkWJi9Vh6yMB-D4BxnVDWUpqZL0sA784U2VqQoe7XEaOHD9MrbUygp-91PF5tD5EiB_ckUaHnf0xsxxa0SA6yVT_3JkFCV4uaSCi6accwjhIigOsOfYvA1iGyYPcGjeaY35_joHQRxVj5eVdV8fRronxa3XjhjC1T-2WlnraUk0pOPS3Z6Lf_P9b1XHvIFLmf2EtsKQN2X-_MZp9fA00Hhd5X-yg"
+
+    activeChats.push({
+      name,
+      conversationID,
+      jwt,
+      memberId,
+      eventStreamUri,
+    });
+    Websocket(eventStreamUri);
+    sendMessage(conversationID, jwt, memberId, message);
+
+    console.log(activeChats);
+
+    firstChat = false;
+  } else if (message != undefined && name != undefined && firstChat == false) {
+    sendMessage(
+      activeChats[0].conversationID,
+      activeChats[0].jwt,
+      activeChats[0].memberId,
+      message
+    );
+    // sendMessage(
+    //   activeChats[0].ConversationID,
+    //   activeChats[0].jwt,
+    //   activeChats[0].memberId,
+    //   message
+    // );
+    console.log("Second  message");
+  }
+  console.log("Valor: " + firstChat);
+  return response.status(200).json({ message: "Message received!" });
+});
+
+function createConversationObj(name) {
+  console.log("Creating conversation object");
+
+  const platformClient = require("purecloud-platform-client-v2");
+
+  const client = platformClient.ApiClient.instance;
+  client.setEnvironment(platformClient.PureCloudRegionHosts.us_east_1); // Genesys Cloud region
+
+  let apiInstance = new platformClient.WebChatApi();
+
+  let params = {
+    organizationId: "adb3e3ee-7bb4-4e2a-b754-178ff8fc359b",
+    deploymentId: "be34dee8-c823-487b-98fe-2afa1f08de35",
+    routingTarget: {
+      targetType: "queue",
+      targetAddress: "TESTE",
     },
-  });
-});
-app.use("/get_userstable", require("./backend/routes/usersRoutes"));
-app.use("/get_extensionstable", require("./backend/routes/extensionsRoutes"));
+    memberInfo: {
+      displayName: name,
+      avatarImageUrl: "http://some-url.com/JoeDirtsFace",
+      lastName: "Joe",
+      firstName: "Dirt",
+      email: "joe.dirt@example.com",
+      phoneNumber: "+12223334444",
+      customFields: {
+        some_field: "arbitrary data",
+        another_field: "more arbitrary data",
+      },
+    },
+  }; // Object | CreateConversationRequest
 
-app.listen(4010, () => {
-  console.log("server is Running on 4010");
-});
+  // Create an ACD chat conversation from an external
+  return apiInstance
+    .postWebchatGuestConversations(params)
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      console.log("There was a failure calling postWebchatGuestConversations");
+      console.error(err);
+    });
+}
 
-async function callApi() {
-  // const clientId = '01116766-51c1-46b7-95f1-adff32b85374';
-  // const clientSecret = 'BJZCipWwlMrvasBSn6e44jPYC0CYC6N76Vcp7f4tO4M';
-  // const environment = 'mypurecloud.com'
+function sendMessage(conversationID, jwt, memberId, message) {
+  console.log("Creating message");
+  let messageBody;
+  console.log(
+    "conversationID: " +
+      conversationID +
+      "\n" +
+      "jwt: " +
+      jwt +
+      "\n" +
+      "memberId: " +
+      memberId +
+      "\n"
+  );
+  if (firstChat == true) {
+    messageBody = {
+      body: message,
+      bodyType: "standard | notice",
+    };
+  } else if (firstChat == false) {
+    messageBody = {
+      body: message,
+      bodyType: "standard",
+    };
+  }
+  console.log(
+    `https://api.mypurecloud.com/api/v2/webchat/guest/conversations/${conversationID}/members/${memberId}/messages`
+  );
+  console.log(messageBody);
 
-  var today = new Date();
-  var date =
-    today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
-  var time =
-    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-  var hours = today.getHours();
-  var day = today.getDay();
-  console.log("Hora: " + hours);
-  console.log("Dia da semana: " + day);
-  var dateTime = time + " do dia " + date;
-
-  const params = new URLSearchParams();
-  params.append("grant_type", "client_credentials");
-
-  //  Parte que pega o token -------------------------------------------------------------------------
-
-  await fetch(
-    `https://login.mypurecloud.com/oauth/token?grant_type=client_credentials`,
+  fetch(
+    `https://api.mypurecloud.com/api/v2/webchat/guest/conversations/${conversationID}/members/${memberId}/messages`,
     {
       method: "POST",
-      headers: {
+      headers: new Headers({
+        Authorization: `Bearer ${jwt}`,
         "Content-Type": "application/json",
-        Authorization: `Basic ${Buffer.from(
-          clientId + ":" + clientSecret
-        ).toString("base64")}`,
-        // 'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization, ININ-Client-Path',
-        // 'Access-Control-Allow-Origin': 'https://api.mypurecloud.com',
-        // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH'
-      },
+      }),
+      body: JSON.stringify(messageBody),
     }
   )
     .then((res) => {
@@ -114,401 +174,53 @@ async function callApi() {
       }
     })
     .then(async (jsonResponse) => {
-      jsondata = jsonResponse;
+      console.log(jsonResponse);
       // Start the first function
-
-      await sequelize.query(
-        `
-      TRUNCATE TABLE userstables;
-      `
-      );
-      await sequelize.query(
-        `
-      TRUNCATE TABLE extensions;      `
-      );
-
-      // let queryCleanuserstablesTable = `TRUNCATE TABLE userstables;`;
-      //  let queryCleanTable = `TRUNCATE TABLE extensions;`;
-      //  await db.execute(queryCleanuserstablesTable); //Apaga o que tudo ja tem no banco com a query acimaF
-      // await db.execute(queryCleanTable); //Apaga o que tudo ja tem no banco com a query acimaF
-      getUsers(jsonResponse);
-      getExtensions(jsonResponse);
     })
     .catch((e) => console.error(e));
-  //Callback to the other functions
-
-  setTimeout(callApi, 90000);
 }
 
-callApi();
-
-const getUsers = async (body) => {
-  console.log("Getting users");
-  var varpageCount = 1;
-
-  for (i = 1; i <= varpageCount; i++) {
-    console.log(i);
-    const searchParams = {
-      pageSize: 100,
-      pageNumber: i,
-      sortOrder: "ASC",
-      types: ["users"],
-      returnFields: ["ALL_FIELDS"],
-      query: [
-        {
-          type: "EXACT",
-          fields: ["state"],
-          values: ["inactive", "active", "deleted"],
-        },
-      ],
-    };
-
-    const platformClient = require("purecloud-platform-client-v2");
-
-    const client = platformClient.ApiClient.instance;
-    client.setEnvironment(platformClient.PureCloudRegionHosts.us_east_1); // Genesys Cloud region
-
-    // Manually set auth token or use loginImplicitGrant(...) or loginClientCredentialsGrant(...)
-    client.setAccessToken(body.access_token);
-
-    let apiInstance = new platformClient.UsersApi();
-
-    // Search users
-    await apiInstance
-      .postUsersSearch(searchParams)
-      .then(async (jsonResponse) => {
-        varpageCount = jsonResponse.pageCount;
-        await dbInsertUsers(jsonResponse);
-      })
-      .catch((err) => {
-        console.log("There was a failure calling postUsersSearch");
-        console.error(err);
-      });
-
-    //  await fetch(`https://api.${environment}/api/v2/users/search`, {
-    //     method: "POST",
-    //     body: JSON.stringify(searchParams),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `${body.token_type} ${body.access_token}`,
-    //     },
-    //   })
-    //     .then((res) => {
-    //       return res.json();
-    //     })
-    //     .then(async (jsonResponse) => {
-    //       varpageCount = jsonResponse.pageCount;
-    //       await dbInsertUsers(jsonResponse);
-    //     })
-    //     .catch((err) => console.log(err));
-  }
-
-  setTimeout(getLicense, 6000);
-};
-const getLicense = async () => {
-  console.log("Inserting licenses on Users...");
-  body = jsondata;
-  var varPageNumber = 1;
-  var varpageCount = 10;
-  count = 0;
-  do {
-    // console.log(varPageNumber);
-    await fetch(
-      `https://api.${environment}/api/v2/license/users?pageSize=100&pageNumber=${varPageNumber}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${body.token_type} ${body.access_token}`,
-        },
-      }
-    )
-      .then((res) => {
-        return res.json();
-      })
-      .then(async (jsonResponse) => {
-        // console.log(jsonResponse);
-        varpageCount = jsonResponse.pageCount;
-        await dbInsertLicense(jsonResponse);
-      })
-      .catch((err) => console.log(err));
-    varPageNumber++;
-    count++;
-  } while (varPageNumber <= varpageCount);
-  setTimeout(runQueryes, 5000);
-};
-const runQueryes = async () => {
-  console.log("Running Queryes...");
-  await sequelize
-    .query(`TRUNCATE TABLE managers;`)
-    .then(async () => {
-      console.log("queryNames");
-      await sequelize.query(
-        `
-   INSERT INTO managers (idmanager)
-   SELECT manager FROM userstables
-   WHERE manager <> "-"
-   `
-      );
-    })
-    .then(async () => {
-      console.log("queryNames");
-      await sequelize.query(
-        `
-   UPDATE userstables, managers
-   SET managers.name = userstables.name
-   WHERE managers.idmanager = userstables.id
-   `
-      );
-    })
-    .then(async () => {
-      console.log("queryUpdate");
-      await sequelize.query(
-        `
-     UPDATE userstables, managers
-     SET userstables.manager = managers.name
-     WHERE managers.idmanager = userstables.manager
-     `
-      );
-    })
-    .then(async () => {
-      console.log("queryDepartment");
-      await sequelize.query(
-        `
-     UPDATE extensions, userstables
-     SET extensions.department = userstables.department
-     WHERE userstables.id = extensions.userid
-     `
-      );
-    })
-    .then(async () => {
-      console.log("queryAllextensions");
-      await sequelize.query(
-        `
-          UPDATE userstables, extensions
-          SET userstables.extension = extensions.end
-          WHERE extensions.userid = userstables.id
-           `
-      );
-    })
-    .then(async () => {
-      console.log("queryDepartment");
-      await sequelize.query(
-        `
-          TRUNCATE TABLE usersfrontends;
-          `
-      );
-    })
-    .then(async () => {
-      console.log("queryDepartment");
-      await sequelize.query(
-        `
-          TRUNCATE TABLE extensionsfrontends;
-          `
-      );
+// Websocket()
+async function Websocket(eventStreamUri) {
+  let clients = [new WebSocket(eventStreamUri)];
+  clients.map((client) => {
+    client.on("message", (msg) => {
+      console.log()
+      io.sockets.emit("receive_message", msg.toString());
+      console.log(msg.toString())
     });
-  setTimeout(copyusers, 1000);
-};
-const copyusers = async () => {
-  await sequelize
-    .query(
-      `
-    REPLACE usersfrontends SELECT * FROM userstables ;
-    `
-    )
-    .then(async () => {
-      console.log("queryDepartment");
-      await sequelize.query(
-        `
-      INSERT extensionsfrontends SELECT * FROM extensions ;
-      `
-      );
-    });
-};
-const getExtensions = async (body) => {
-  // console.log("Limpando o Banco");
-
-
+  });
   
-  const queryGetExtensions = await PostExtensions.findExtensionRanges();
+}
+// function sendWebSocketMessage(){
 
-  extensionRanges = queryGetExtensions[0];
+//   iosocket.emit("serverCustomEvent", msg.toString());
+// }
 
-  extensionRanges.map(async (e) => {
-    // pra cada entrada de range da tabela ele vai fazer a funÃ§Ã£o  abaixo
-    startValue = e.start;
-    endValue = e.end;
-    prefixValue = e.prefix; // pega os valores que voltaram do banco e atribui variaveis
+const io = new Server(3002, {
+  cors: {
+    origin: "http://localhost:3001",
+    methods: ["GET", "POST"],
+  },
+});
 
-    for (let i = startValue; i <= endValue; i++) {
-      await dbInsertExtensionsRanges(prefixValue, i);
-    }
+io.sockets.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("join_room", (data) => {
+    socket.join(data);
+    console.log(`User with ID: `);
   });
 
-  const client = platformClient.ApiClient.instance;
-  client.setEnvironment(platformClient.PureCloudRegionHosts.us_east_1); // Genesys Cloud region
-
-  // Manually set auth token or use loginImplicitGrant(...) or loginClientCredentialsGrant(...)
-  client.setAccessToken(body.access_token);
-
-  let apiInstance = new platformClient.TelephonyProvidersEdgeApi();
-
-  var varPageNumber = 1;
-  var varpageCount = 5;
-
-  do {
-    // console.log(varPageNumber);
-
-    let opts = {
-      pageSize: 100, // Number | Page size
-      pageNumber: varPageNumber, // Number | Page number
-      sortBy: "number", // String | Sort by
-      sortOrder: "ASC", // String | Sort order
-    };
-
-    // Get a listing of extensions
-    await apiInstance
-      .getTelephonyProvidersEdgesExtensions(opts)
-      .then(async (jsonResponse) => {
-        varpageCount = jsonResponse.pageCount;
-        // console.log(varpageCount);
-        await dbInsertExtensions(jsonResponse);
-      })
-      .catch((err) => {
-        console.log(
-          "There was a failure calling getTelephonyProvidersEdgesExtensions"
-        );
-        console.error(err);
-      });
-    varPageNumber = varPageNumber + 1;
-  } while (varPageNumber <= varpageCount);
-};
-//   const getExtensionsDep = () => {
-//     console.log("Inserindo departamentos nos Ramais...");
-
-// //     let queryDepartment = `
-// //  UPDATE extensions, users
-// //  SET extensions.department = users.department
-// //  WHERE users.id = extensions.userid
-// //  `;
-
-// //     db.execute(queryDepartment);
-//   };
-
-async function dbInsertUsers(jsonResponse) {
-  await jsonResponse.results.map(async (json) => {
-    let { id, name, state, email } = json;
-
-    let manager = "-";
-    if (json.manager) {
-      manager = json.manager.id;
-    }
-    let department = "-";
-    if (json.department != undefined) {
-      department = json.department;
-    }
-
-    let extension = "-";
-    if (json.addresses[0]) {
-      extension = json.addresses[0].extension;
-      // if (extension.length > 4) {
-      //   extension = json.addresses[1].extension;
-      // }
-    }
-
-    let license = "-";
-
-    await Users.create({
-      id: id,
-      name: name,
-      state: state,
-      department: department,
-      address: email,
-      manager: manager,
-      extension: extension,
-      license: license,
-    });
-
-    //   // console.log(
-    //   //   "\n" + "id: " + id,
-    //   //   "\n" + "name: " + name,
-    //   //   "\n" + "state: " + state,
-    //   //   "\n" + "department: " + department,
-    //   //   "\n" + "address: " + email,
-    //   //   "\n" + "manager: " + manager,
-    //   //   "\n" + "extension: " + extension,
-    //   //   "\n" + "license: " + license
-    //   // );
-    //   // console.log(
-    //   "id: " + id,
-    //    "name: " + name,
-    //   / "state: " + state,
-    // "department: " + department,
-    //   //   "\n" + "address: " + email,
-    //   //   "\n" + "manager: " + manager,
-    //   //   "\n" + "extension: " + extension,
-    //   //   "\n" + "license: " + license
-    //   // );
-
-    //   let post = new PostUsers(
-    //     id,
-    //     name,
-    //     state,
-    //     department,
-    //     email,
-    //     manager,
-    //     extension,
-    //     license
-    //   );
-    //   post = post.saveUsers();
+  // socket.on("send_message", (data) => {
+  //   socket.to(data.room).emit("receive_message", data);
+  // });
+//  io.sockets.emit('super event', data);
+  socket.on("disconnect", () => {
+    console.log("User Disconnected", socket.id);
   });
-}
-async function dbInsertLicense(jsonResponse) {
-  // console.log(jsonResponse);
-  await jsonResponse.entities.map(async (json) => {
-    let { id } = json;
+});
 
-    let license = json.licenses[0];
-
-    // console.log("\n" + "id: " + id, "\n" + "license: " + license);
-
-    await Users.update(
-      {
-        license: license,
-      },
-      {
-        where: { id: id },
-      }
-    );
-    // let post = new PostLicenses(id, license);
-    // post = post.saveLicenses();
-  });
-}
-async function dbInsertExtensionsRanges(prefix, end) {
-  // console.log("\n" + "prefix: " + prefix, "\n" + "end: " + end);
-  let post = new PostExtensionsRanges(prefix, end);
-  post = await post.saveExtensionsRanges();
-}
-function dbInsertExtensions(jsonResponse) {
-  // console.log(jsonResponse);
-  jsonResponse.entities.map((json) => {
-    let { state, number, ownerType } = json;
-    if (state == "active") {
-      state = "Em Uso";
-    }
-    let userid = json.owner.id;
-    let name = json.owner.name;
-
-    // console.log(
-    //   "\n" + "userid: " + userid,
-    //   "\n" + "name: " + name,
-    //   "\n" + "state: " + state,
-    //   "\n" + "number: " + number,
-    //   "\n" + "ownerType: " + ownerType,
-    //   "\n" + "\n" + "---------------------------------"
-    // );
-
-    let post = new PostExtensions(userid, name, state, number, ownerType);
-    post = post.saveExtensions();
-  });
-}
+app.listen(4000, () => {
+  console.log("server is Running on 4000");
+});

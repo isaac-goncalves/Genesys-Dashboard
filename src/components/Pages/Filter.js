@@ -83,7 +83,7 @@ export function SelectColumnFilter({
         onChange={(e) => {
           setFilter(e.target.value || undefined);
         }}
-        
+
       >
         <MenuItem value="">All</MenuItem>
         {options.map((option, i) => (

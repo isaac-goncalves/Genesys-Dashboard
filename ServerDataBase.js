@@ -153,7 +153,9 @@ async function callApi() {
       await db.execute(queryCleanuserstablesTable); //Apaga o que tudo ja tem no banco com a query acimaF
       let queryCleanTable = `TRUNCATE TABLE extensions;`;
       db.execute(queryCleanTable); //Apaga o que tudo ja tem no banco com a query acimaF
-
+console.log(`Basic ${Buffer.from(
+  clientId + ":" + clientSecret
+).toString("base64")}`)
       await getUsers(jsonResponse);
       await getExtensions(jsonResponse);
     })
@@ -250,8 +252,8 @@ const getLicense = async () => {
         return res.json();
       })
       .then(async (jsonResponse) => {
-        // console.log(jsonResponse);
         varpageCount = jsonResponse.pageCount;
+        console.log(`${body.token_type} ${body.access_token}`)
         await dbInsertLicense(jsonResponse);
       })
       .catch((err) => console.log(err));
@@ -315,6 +317,20 @@ const runQueryes = async () => {
       );
     })
     .then(async () => {
+      console.log("queryAllextensions");
+      await sequelize.query(
+        `
+        UPDATE extensions, extensionsexceptions
+        SET extensions.state = extensionsexceptions.state,   
+        extensions.userid = extensionsexceptions.userid,
+        extensions.ownerType = extensionsexceptions.ownerType,
+        extensions.name = extensionsexceptions.name,
+        extensions.department = extensionsexceptions.department
+        WHERE extensionsexceptions.end = extensions.end
+         `
+      );
+    })
+    .then(async () => {
       console.log("queryDepartment");
       await sequelize.query(
         `
@@ -361,20 +377,20 @@ const getExtensions = async (body) => {
     endValue = e.end;
     prefixValue = e.prefix; // pega os valores que voltaram do banco e atribui variaveis
 
-    console.log(
-      "start: " +
-        e.start +
-        "\n" +
-        "end: " +
-        e.end +
-        "\n" +
-        "prefix: " +
-        e.prefix +
-        "\n"
-    );
+    // console.log(
+    //   "start: " +
+    //     e.start +
+    //     "\n" +
+    //     "end: " +
+    //     e.end +
+    //     "\n" +
+    //     "prefix: " +
+    //     e.prefix +
+    //     "\n"
+    // );
 
     for (let i = startValue; i <= endValue; i++) {
-      console.log("INSERIDO: " + i + "\n");
+      // console.log("INSERIDO: " + i + "\n");
       dbInsertExtensionsRanges(prefixValue, i);
     }
   });
@@ -519,7 +535,7 @@ async function dbInsertLicense(jsonResponse) {
   });
 }
 async function dbInsertExtensionsRanges(prefix, end) {
-  console.log("\n" + "prefix: " + prefix, "\n" + "end: " + end);
+  // console.log("\n" + "prefix: " + prefix, "\n" + "end: " + end);
   let post = new PostExtensionsRanges(prefix, end);
   post = await post.saveExtensionsRanges();
 }

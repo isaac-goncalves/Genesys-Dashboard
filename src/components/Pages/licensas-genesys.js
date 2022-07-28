@@ -152,7 +152,7 @@ export default function LicensasGenesys() {
       if (loginStatusMessage) {
         return (
           <div className="loginStatusMessage">
-            <ErrorOutlineIcon style={{ color: 'red' }}/>
+            <ErrorOutlineIcon style={{ color: "red" }} />
             <p>{loginStatusMessage}</p>
           </div>
         );
@@ -177,7 +177,7 @@ export default function LicensasGenesys() {
       console.log("Login function");
       console.log(username);
       console.log(password);
-      Axios.post("http://localhost:4000/login", {
+      Axios.post("http://136.166.35.153:4010/login", {
         username: username,
         password: password,
       }).then((response) => {
@@ -211,14 +211,6 @@ export default function LicensasGenesys() {
                   <h2>Sign In</h2>
                 </div>
               </Grid>
-              {/* <label>Username </label>
-              <input
-                type="text"
-                name="uname"
-                required
-                onChange={(e) => setUsername(e.target.value)}
-                value={username}
-              /> */}
               <TextField
                 size="small"
                 onChange={(e) => setUsername(e.target.value)}
@@ -226,18 +218,9 @@ export default function LicensasGenesys() {
                 type="text"
                 label="Username"
                 placeholder="Digite o usuário"
+                autocomplete="username"
                 fullWidth
               />
-              {/* <label>Password </label>
-              <input
-                type="password"
-                name="pass"
-                required
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                value={password}
-              /> */}
               <TextField
                 size="small"
                 onChange={(e) => setPassword(e.target.value)}
@@ -245,6 +228,7 @@ export default function LicensasGenesys() {
                 type="text"
                 label="Password"
                 placeholder="Digite a senha"
+                autocomplete="new-password"
                 fullWidth
               />
               <div className="button-container">
@@ -277,6 +261,7 @@ export default function LicensasGenesys() {
             sx={{ color: "white", borderColor: "white" }}
             className="logout-button"
             variant="outlined"
+            size="small"
           >
             Logout
           </Button>
