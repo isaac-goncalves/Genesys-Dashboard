@@ -74,7 +74,6 @@ table {
   color: black;
   font-weight: 600;
   font-size: 0.9rem;
-
   overflow: hidden;
 }
 table thead tr {
@@ -133,11 +132,11 @@ box-shadow: 2px 2px 5px #c0c0c0; */
 }
 .header-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 .table-container {
   border-collapse: collapse;
-  min-width: 400px;
+ 
   max-width: 1360px;
   font-size: 1em;
   color: black;

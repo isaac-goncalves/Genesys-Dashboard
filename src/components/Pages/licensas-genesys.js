@@ -15,6 +15,8 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 export default function LicensasGenesys() {
   const [data, setData] = useState([]);
+  const [licenseCloudCX3, setLicenseCloudCX3] = useState([]);
+  const [licenseCommunicate, setLicenseCommunicate] = useState([]);
   const [isLoaded, setIsloaded] = useState(false);
   var [activeUsers, setActiveUsers] = useState(0);
   var [deletedUsers, setDeletedUsers] = useState(0);
@@ -85,11 +87,12 @@ export default function LicensasGenesys() {
       // console.log(stringefied)
       setIsLoggedin(true);
       setLoginStatus(foundUser.username);
-      fetchData();
+      fetchTableData();
+      fetchLicenseData();
     }
   }, []);
 
-  function fetchData() {
+  function fetchTableData() {
     fetch(`http://136.166.35.153:4010/get_userstable`, {
       method: "GET",
       headers: {
@@ -109,7 +112,28 @@ export default function LicensasGenesys() {
         calculateActives(jsonResponse.users);
         setIsloaded(true);
       });
-    console.log("data: " + data.users);
+  }
+
+  function fetchLicenseData() {
+    fetch(`http://localhost:4000/get_licenseinfo`, {
+      //alterar para porta ip e porta do servidor
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw Error(res.statusText);
+        }
+      })
+      .then((jsonResponse) => {
+        console.log(jsonResponse);
+        setLicenseCloudCX3(jsonResponse.json.CloudCX3)
+        setLicenseCommunicate(jsonResponse.json.Communicate)
+      });
   }
 
   const columns = useMemo(() => [
@@ -188,7 +212,8 @@ export default function LicensasGenesys() {
           setLoginStatus(response.data.username);
           const userStringfy = response.data;
           localStorage.setItem("user", JSON.stringify(userStringfy));
-          fetchData();
+          fetchTableData();
+          fetchLicenseData();
         }
         console.log(response);
       });
@@ -271,7 +296,25 @@ export default function LicensasGenesys() {
           <div className="table-container">
             <thead>
               <tr>
-                <th>Tipo de Licença</th>
+                <th>Licenças em uso</th>
+                <th>Quantidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="">CloudCX3</td>
+                <td>{licenseCloudCX3}</td>
+              </tr>
+              <tr>
+                <td className="">Communicate</td>
+                <td>{licenseCommunicate}</td>
+              </tr>
+            </tbody>
+          </div>
+          <div className="table-container">
+            <thead>
+              <tr>
+                <th>Licenças atribuidas</th>
                 <th>Quantidade</th>
               </tr>
             </thead>

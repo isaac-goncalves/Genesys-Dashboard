@@ -10,9 +10,7 @@ const clientId = process.env.REACT_APP_GENESYS_CLOUD_CLIENT_ID;
 const clientSecret = process.env.REACT_APP_GENESYS_CLOUD_CLIENT_SECRET;
 const environment = process.env.REACT_APP_GENESYS_CLOUD_ENVIRONMENT;
 const http = require("http");
-
 const { Server } = require("socket.io");
-
 const WebSocket = require("ws");
 const { json } = require("body-parser");
 
@@ -102,8 +100,8 @@ function createConversationObj(name) {
     memberInfo: {
       displayName: name,
       avatarImageUrl: "http://some-url.com/JoeDirtsFace",
-      lastName: "Joe",
-      firstName: "Dirt",
+      lastName: name,
+      firstName: name,
       email: "joe.dirt@example.com",
       phoneNumber: "+12223334444",
       customFields: {
@@ -185,17 +183,15 @@ async function Websocket(eventStreamUri) {
   let clients = [new WebSocket(eventStreamUri)];
   clients.map((client) => {
     client.on("message", (msg) => {
-      console.log()
-      io.sockets.emit("receive_message", msg.toString());
-      console.log(msg.toString())
+      sendWebSocketMessage(msg.toString())
     });
   });
-  
 }
-// function sendWebSocketMessage(){
 
-//   iosocket.emit("serverCustomEvent", msg.toString());
-// }
+function sendWebSocketMessage(msg){
+  console.log(msg)
+  io.sockets.emit("serverCustomEvent", msg);
+}
 
 const io = new Server(3002, {
   cors: {

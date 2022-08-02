@@ -55,6 +55,11 @@ app.post("/login", (req, res) => {
 
 //USER LOGIN ------------------------
 
+var licenses = {
+  CloudCX3: 0,
+  Communicate: 0
+};
+
 var state = {
   items: [],
   JsonEdge: [],
@@ -99,11 +104,19 @@ app.get("/get_edge_status", async (req, res) => {
 app.use("/get_userstable", require("./backend/routes/usersRoutes"));
 app.use("/get_extensionstable", require("./backend/routes/extensionsRoutes"));
 
+app.use("/get_licenseinfo", (req, res) => {
+  return res.json({json: {
+    CloudCX3: licenses.CloudCX3,
+    Communicate: licenses.Communicate
+  }});
+});
+
 app.listen(4000, () => {
   console.log("server is Running on 4000");
 });
 
 async function callApi() {
+  
   // const clientId = '01116766-51c1-46b7-95f1-adff32b85374';
   // const clientSecret = 'BJZCipWwlMrvasBSn6e44jPYC0CYC6N76Vcp7f4tO4M';
   // const environment = 'mypurecloud.com'
@@ -153,11 +166,12 @@ async function callApi() {
       await db.execute(queryCleanuserstablesTable); //Apaga o que tudo ja tem no banco com a query acimaF
       let queryCleanTable = `TRUNCATE TABLE extensions;`;
       db.execute(queryCleanTable); //Apaga o que tudo ja tem no banco com a query acimaF
-console.log(`Basic ${Buffer.from(
-  clientId + ":" + clientSecret
-).toString("base64")}`)
-      await getUsers(jsonResponse);
-      await getExtensions(jsonResponse);
+      console.log(
+        `Basic ${Buffer.from(clientId + ":" + clientSecret).toString("base64")}`
+      );
+      // await getUsers(jsonResponse);
+      // await getExtensions(jsonResponse);
+      await getLicensesinuse(jsonResponse);
     })
     .catch((e) => console.error(e));
   //Callback to the other functions
@@ -230,6 +244,61 @@ const getUsers = async (body) => {
 
   setTimeout(getLicense, 6000);
 };
+const getLicensesinuse = (body) => {
+  var today = new Date();
+  const day = today.getDate();
+  const month = today.getMonth() + 1;
+  const year = today.getFullYear();
+  console.log("Dia: " + day);
+  console.log("Mês: " + month);
+  console.log("Ano: " + year);
+
+  console.log(`${year}-${month - 1}-${day}T00:00:00-03:00`);
+
+  const platformClient = require("purecloud-platform-client-v2");
+
+  const client = platformClient.ApiClient.instance;
+  client.setEnvironment(platformClient.PureCloudRegionHosts.us_east_1); // Genesys Cloud region
+
+  // Manually set auth token or use loginImplicitGrant(...) or loginClientCredentialsGrant(...)
+  client.setAccessToken(body.access_token);
+
+  let apiInstance = new platformClient.BillingApi();
+
+  let startDate = `${year}-${month - 1}-12T00:00:00-03:00` // Date | The period start date. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z
+  let endDate = `${year}-${month}-11T00:00:00-03:00`; // Date | The period end date. Date time is represented as an ISO-8601 string. For example: yyyy-MM-ddTHH:mm:ss[.mmm]Z
+
+  // Get a report of the billable license usages
+  apiInstance
+    .getBillingReportsBillableusage(startDate, endDate)
+    .then((data) => {
+      
+      if(data.status == "InProgress"){
+        console.log("Pesquisa em progresso")
+      }
+      else{
+
+        // console.log(
+          //   `getBillingReportsBillableusage success! data: ${JSON.stringify(
+      //     jsondata,
+      //     null,
+      //     2
+      //   )}`
+      // );
+      const CloudCX3 = data.usages[2].resources.length
+      const Communicate =  data.usages[1].resources.length
+
+      console.log("CloudCX3",CloudCX3)
+      console.log("Communicate",Communicate)
+      licenses.CloudCX3 = CloudCX3
+      licenses.Communicate = Communicate
+    }
+    })
+    .catch((err) => {
+      console.log("There was a failure calling getBillingReportsBillableusage");
+      console.error(err);
+    });
+};
 const getLicense = async () => {
   console.log("Inserting licenses on Users...");
   body = jsondata;
@@ -253,7 +322,7 @@ const getLicense = async () => {
       })
       .then(async (jsonResponse) => {
         varpageCount = jsonResponse.pageCount;
-        console.log(`${body.token_type} ${body.access_token}`)
+        console.log(`${body.token_type} ${body.access_token}`);
         await dbInsertLicense(jsonResponse);
       })
       .catch((err) => console.log(err));
