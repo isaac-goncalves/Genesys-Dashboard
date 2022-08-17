@@ -131,8 +131,8 @@ export default function LicensasGenesys() {
       })
       .then((jsonResponse) => {
         console.log(jsonResponse);
-        setLicenseCloudCX3(jsonResponse.json.CloudCX3)
-        setLicenseCommunicate(jsonResponse.json.Communicate)
+        setLicenseCloudCX3(jsonResponse.json.CloudCX3);
+        setLicenseCommunicate(jsonResponse.json.Communicate);
       });
   }
 
@@ -145,7 +145,7 @@ export default function LicensasGenesys() {
       Header: "Estado",
       accessor: "state",
       Filter: SelectColumnFilter,
-      filter: "includes",
+      filter: "exact",
     },
     {
       Header: "Departmento",
@@ -250,7 +250,7 @@ export default function LicensasGenesys() {
                 size="small"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
-                type="text"
+                type="password"
                 label="Password"
                 placeholder="Digite a senha"
                 autocomplete="new-password"
@@ -293,67 +293,69 @@ export default function LicensasGenesys() {
         </div>
         <div className="header-container">
           <h1>Licenças Genesys</h1>
-          <div className="table-container">
-            <thead>
-              <tr>
-                <th>Licenças em uso</th>
-                <th>Quantidade</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="">CloudCX3</td>
-                <td>{licenseCloudCX3}</td>
-              </tr>
-              <tr>
-                <td className="">Communicate</td>
-                <td>{licenseCommunicate}</td>
-              </tr>
-            </tbody>
-          </div>
-          <div className="table-container">
-            <thead>
-              <tr>
-                <th>Licenças atribuidas</th>
-                <th>Quantidade</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="">CloudCX3</td>
-                <td>{CX3Users}</td>
-              </tr>
-              <tr>
-                <td className="">Communicate</td>
-                <td>{communicateUsers}</td>
-              </tr>
-              <tr>
-                <td className="">PredictiveEngagementLicense</td>
-                <td>{preditiveEngUsers}</td>
-              </tr>
-            </tbody>
-          </div>
-          <div className="table-container">
-            <thead>
-              <tr>
-                <th>Acessos</th>
-                <th>Quantidade</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="Ativo">Ativo</td>
-                <td>{activeUsers}</td>
-              </tr>
-              <tr>
-                <td className="Deletados">Deletados</td>
-                <td>{deletedUsers}</td>
-              </tr>
-              <tr>
-                <td className="Desativados">Desativados</td>
-                <td>{inactiveUsers}</td>
-              </tr>
-            </tbody>
+          <div className="status-tables-wrapper">
+            <div className="table-container">
+              <thead>
+                <tr>
+                  <th>Licenças em uso</th>
+                  <th>Quantidade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="">CloudCX3</td>
+                  <td>{licenseCloudCX3}</td>
+                </tr>
+                <tr>
+                  <td className="">Communicate</td>
+                  <td>{licenseCommunicate}</td>
+                </tr>
+              </tbody>
+            </div>
+            <div className="table-container">
+              <thead>
+                <tr>
+                  <th>Licenças atribuidas</th>
+                  <th>Quantidade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="">CloudCX3</td>
+                  <td>{CX3Users}</td>
+                </tr>
+                <tr>
+                  <td className="">Communicate</td>
+                  <td>{communicateUsers}</td>
+                </tr>
+                <tr>
+                  <td className="">PredictiveEngagementLicense</td>
+                  <td>{preditiveEngUsers}</td>
+                </tr>
+              </tbody>
+            </div>
+            <div className="table-container">
+              <thead>
+                <tr>
+                  <th>Acessos</th>
+                  <th>Quantidade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="Ativo">Ativo</td>
+                  <td>{activeUsers}</td>
+                </tr>
+                <tr>
+                  <td className="Deletados">Deletados</td>
+                  <td>{deletedUsers}</td>
+                </tr>
+                <tr>
+                  <td className="Desativados">Desativados</td>
+                  <td>{inactiveUsers}</td>
+                </tr>
+              </tbody>
+            </div>
           </div>
         </div>
         <Table className="content-table" columns={columns} data={data} />

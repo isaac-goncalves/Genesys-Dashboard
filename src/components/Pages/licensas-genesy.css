@@ -65,11 +65,12 @@ table thead {
 h1 {
   color: black;
   margin: 15px 25px;
+  
 }
 table {
   border-collapse: collapse;
   min-width: 400px;
-  font-size: 1em;
+  font-size: 0.8em;
   margin: 15px 10px;
   color: black;
   font-weight: 600;
@@ -132,25 +133,27 @@ box-shadow: 2px 2px 5px #c0c0c0; */
 }
 .header-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+}
+.status-tables-wrapper{
+display: flex;
 }
 .table-container {
   border-collapse: collapse;
- 
   max-width: 1360px;
-  font-size: 1em;
+  font-size: 0.5rem;
   color: black;
   font-weight: 600;
-  font-size: 0.9rem;
-  overflow: hidden;
+  font-size: 0.8rem;
+  margin:  0px 10px;
 }
 .table-container thead tr {
   text-align: left;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 .table-container thead tr:nth-child(1) {
-  box-shadow: 0 3px 5px #c0c0c0;
+  box-shadow: 0 3px 3px #e6e6e6;
   background-color: rgba(233, 231, 231, 0.842);
 }
 .table-container th,
@@ -292,7 +295,7 @@ p {
   position: fixed;
   color: white;
   
-  top: 12px;
+  top: 16px;
   right: 15px;
   z-index: 1101;
 }
