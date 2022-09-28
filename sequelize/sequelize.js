@@ -8,6 +8,7 @@ const ExtensionsFrontend = require("./models/extensionsfrontend");
 const ExtensionsRanges = require("./models/extensionranges");
 const Managers = require("./models/managers");
 const Usernames = require("./models/usernames");
+const Lastlogindate = require("./models/lastlogindate");
 
 
 // {force: true}

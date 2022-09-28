@@ -31,6 +31,10 @@ const UsersFrontend = sequelize.define("usersfrontends", {
     type: Sequelize.STRING,
     allowNull: true
   },
+  datelastlogin: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
   extension: {
     type: Sequelize.STRING,
     allowNull: true

@@ -32,6 +32,10 @@ const Users = sequelize.define(
     manager: {
       type: Sequelize.STRING,
       allowNull: true,
+    }, 
+    datelastlogin: {
+      type: Sequelize.STRING,
+      allowNull: true,
     },
     extension: {
       type: Sequelize.STRING,

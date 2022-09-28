@@ -32,11 +32,11 @@ export default function DDrsEmbratel() {
 
   function calculateAvaliableDDRS(data) {
     for (let i = 0; i < data.length; i++) {
-      if (data[i].state == "Em Uso") {
-        valorAvaliable++;
+      if (data[i].state == "Em uso" || data[i].state == "Reservado") {      
+   valorUsed++;
       }
-      if (data[i].state == "-") {
-        valorUsed++;
+      if (data[i].state == "-" ) {
+   valorAvaliable++;
       }
     }
     setAvaliableDDRS(valorAvaliable);
@@ -183,7 +183,7 @@ export default function DDrsEmbratel() {
                 size="small"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
-                type="text"
+                type="password"
                 label="Password"
                 placeholder="Digite a senha"
                 fullWidth

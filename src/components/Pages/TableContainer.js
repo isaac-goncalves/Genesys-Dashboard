@@ -1,7 +1,8 @@
 import React from "react";
 import { useTable } from "react-table";
-import { useFilters, useGlobalFilter } from "react-table";
+import { useFilters, useGlobalFilter, useSortBy } from "react-table";
 import { GlobalFilter, DefaultFilterForColumn } from "./Filter";
+import { TableSortLabel } from "@mui/material/node";
 
 export default function Table({ columns, data }) {
   const {
@@ -21,7 +22,8 @@ export default function Table({ columns, data }) {
       defaultColumn: { Filter: DefaultFilterForColumn },
     },
     useFilters,
-    useGlobalFilter
+    useGlobalFilter,
+    useSortBy
   );
   return (
     <div>
@@ -38,10 +40,15 @@ export default function Table({ columns, data }) {
           {headerGroups.map((headerGroup) => (
             <tr className="header-group" {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render("Header")}
-                  {/* Rendering Default Column Filter */}
+                  {/* <span>{column.isSorted ? (column.isSortedDesc ? '▲' : '▼') : 'Sort'}</span> */}
+                  <TableSortLabel
+                    active={column.isSorted}
+                    direction={column.isSortedDesc ? 'desc' : 'asc'}
+                  />                  {/* Rendering Default Column Filter */}
                   <div>{column.canFilter ? column.render("Filter") : null}</div>
+                  {/* Rendering Sort Icon */}
                 </th>
               ))}
             </tr>

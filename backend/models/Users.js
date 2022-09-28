@@ -22,6 +22,7 @@ class PostUsers {
       department,
       address,
       manager,
+      datelastlogin,
       extension,
       license
     )
@@ -32,6 +33,7 @@ class PostUsers {
       '${this.department}',
       '${this.address}',
       '${this.manager}',
+      '-',
       '${this.extension}',
       '${this.license}'
     )
@@ -44,6 +46,12 @@ class PostUsers {
     ORDER BY name;`;
     return db.execute(sql);
   }
+  static findAllUsersIds() {
+    let sql = `SELECT id FROM usersfrontends
+    WHERE state = 'active';`;
+    return db.execute(sql);
+  }
+
 }
 
 module.exports = PostUsers;

@@ -12,11 +12,11 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import CircularProgress from "@mui/material/CircularProgress";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import moment from "moment";
+import { matchSorter } from 'match-sorter'
 
 export default function LicensasGenesys() {
   const [data, setData] = useState([]);
-  const [licenseCloudCX3, setLicenseCloudCX3] = useState([]);
-  const [licenseCommunicate, setLicenseCommunicate] = useState([]);
   const [isLoaded, setIsloaded] = useState(false);
   var [activeUsers, setActiveUsers] = useState(0);
   var [deletedUsers, setDeletedUsers] = useState(0);
@@ -36,6 +36,22 @@ export default function LicensasGenesys() {
   var valordeCX3 = 0;
   var valordePreditiveEng = 0;
   var valorCommunicate = 0;
+
+  function refreshPage() {
+    fetch("http://localhost:4010/refresh", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => response.json()
+    ).then((json) => {
+      console.log(json)
+      // setData(json);
+      // setIsloaded(true);
+    });
+
+    window.location.reload(false);
+  }
 
   function calculateActives(data) {
     for (let i = 0; i < data.length; i++) {
@@ -66,14 +82,14 @@ export default function LicensasGenesys() {
     setcommunicateUsers(valorCommunicate);
     console.log(
       "\n" +
-        "Active users: " +
-        activeUsers +
-        "\n" +
-        "Deleted users: " +
-        deletedUsers +
-        "\n" +
-        "Inactive users: " +
-        inactiveUsers
+      "Active users: " +
+      activeUsers +
+      "\n" +
+      "Deleted users: " +
+      deletedUsers +
+      "\n" +
+      "Inactive users: " +
+      inactiveUsers
     );
   }
 
@@ -87,12 +103,11 @@ export default function LicensasGenesys() {
       // console.log(stringefied)
       setIsLoggedin(true);
       setLoginStatus(foundUser.username);
-      fetchTableData();
-      fetchLicenseData();
+      fetchData();
     }
   }, []);
 
-  function fetchTableData() {
+  function fetchData() {
     fetch(`http://136.166.35.153:4010/get_userstable`, {
       method: "GET",
       headers: {
@@ -112,28 +127,7 @@ export default function LicensasGenesys() {
         calculateActives(jsonResponse.users);
         setIsloaded(true);
       });
-  }
-
-  function fetchLicenseData() {
-    fetch(`http://localhost:4000/get_licenseinfo`, {
-      //alterar para porta ip e porta do servidor
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw Error(res.statusText);
-        }
-      })
-      .then((jsonResponse) => {
-        console.log(jsonResponse);
-        setLicenseCloudCX3(jsonResponse.json.CloudCX3);
-        setLicenseCommunicate(jsonResponse.json.Communicate);
-      });
+    console.log("data: " + data.users);
   }
 
   const columns = useMemo(() => [
@@ -155,10 +149,23 @@ export default function LicensasGenesys() {
       Header: "Gerente",
       accessor: "manager",
     },
-    // {
-    //   Header: "Ultimo Login",
-    //   accessor: "lastlogin",
-    // },
+    {
+      Header: "Ultimo Login",
+      accessor: c => {
+        let date = c.datelastlogin
+        if (date === "-") {
+          return date
+        } else {
+          return moment(date).format('DD/MM/YYYY')
+        }
+      },
+      //transform to miliseconds and sort dates
+      filterMethod: (filter, rows) => {
+        const dateLastLogin = "datelastlogin"
+        //Mach Sorter is used to transform do milisecons and filter the date
+      return matchSorter(rows, filter.value, [ moment(dateLastLogin).format('DD/MM/YYYY')]) },
+      filterAll: true,
+    },
     {
       Header: "Ramal",
       accessor: "extension",
@@ -201,7 +208,7 @@ export default function LicensasGenesys() {
       console.log("Login function");
       console.log(username);
       console.log(password);
-      Axios.post("http://136.166.35.153:4010/login", {
+      Axios.post("http://localhost:4010/login", {
         username: username,
         password: password,
       }).then((response) => {
@@ -212,8 +219,7 @@ export default function LicensasGenesys() {
           setLoginStatus(response.data.username);
           const userStringfy = response.data;
           localStorage.setItem("user", JSON.stringify(userStringfy));
-          fetchTableData();
-          fetchLicenseData();
+          fetchData();
         }
         console.log(response);
       });
@@ -297,25 +303,7 @@ export default function LicensasGenesys() {
             <div className="table-container">
               <thead>
                 <tr>
-                  <th>Licenças em uso</th>
-                  <th>Quantidade</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="">CloudCX3</td>
-                  <td>{licenseCloudCX3}</td>
-                </tr>
-                <tr>
-                  <td className="">Communicate</td>
-                  <td>{licenseCommunicate}</td>
-                </tr>
-              </tbody>
-            </div>
-            <div className="table-container">
-              <thead>
-                <tr>
-                  <th>Licenças atribuidas</th>
+                  <th>Tipo de Licença</th>
                   <th>Quantidade</th>
                 </tr>
               </thead>
@@ -358,6 +346,7 @@ export default function LicensasGenesys() {
             </div>
           </div>
         </div>
+        <button onClick={() => refreshPage()}>refresh</button>
         <Table className="content-table" columns={columns} data={data} />
       </div>
     );
@@ -367,49 +356,51 @@ export default function LicensasGenesys() {
         <div className="header-container">
           <div className="login-status"></div>
           <h1>Licenças Genesys</h1>
-          <div className="table-container">
-            <thead>
-              <tr>
-                <th>Tipo de Licença</th>
-                <th>Quantidade</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="">CloudCX3</td>
-                <td>{CX3Users}</td>
-              </tr>
-              <tr>
-                <td className="">Communicate</td>
-                <td>{communicateUsers}</td>
-              </tr>
-              <tr>
-                <td className="">PredictiveEngagementLicense</td>
-                <td>{preditiveEngUsers}</td>
-              </tr>
-            </tbody>
-          </div>
-          <div className="table-container">
-            <thead>
-              <tr>
-                <th>Acessos</th>
-                <th>Quantidade</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="Ativo">Ativo</td>
-                <td>{activeUsers}</td>
-              </tr>
-              <tr>
-                <td className="Deletados">Deletados</td>
-                <td>{deletedUsers}</td>
-              </tr>
-              <tr>
-                <td className="Desativados">Desativados</td>
-                <td>{inactiveUsers}</td>
-              </tr>
-            </tbody>
+          <div className="status-tables-wrapper">
+            <div className="table-container">
+              <thead>
+                <tr>
+                  <th>Tipo de Licença</th>
+                  <th>Quantidade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="">CloudCX3</td>
+                  <td>{CX3Users}</td>
+                </tr>
+                <tr>
+                  <td className="">Communicate</td>
+                  <td>{communicateUsers}</td>
+                </tr>
+                <tr>
+                  <td className="">PredictiveEngagementLicense</td>
+                  <td>{preditiveEngUsers}</td>
+                </tr>
+              </tbody>
+            </div>
+            <div className="table-container">
+              <thead>
+                <tr>
+                  <th>Acessos</th>
+                  <th>Quantidade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="Ativo">Ativo</td>
+                  <td>{activeUsers}</td>
+                </tr>
+                <tr>
+                  <td className="Deletados">Deletados</td>
+                  <td>{deletedUsers}</td>
+                </tr>
+                <tr>
+                  <td className="Desativados">Desativados</td>
+                  <td>{inactiveUsers}</td>
+                </tr>
+              </tbody>
+            </div>
           </div>
         </div>
         <div className="progress-icon">
@@ -420,3 +411,5 @@ export default function LicensasGenesys() {
     );
   }
 }
+
+

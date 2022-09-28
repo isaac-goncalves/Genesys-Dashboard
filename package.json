@@ -16,8 +16,11 @@
     "chart.js": "^3.7.1",
     "chartjs-plugin-streaming": "^2.0.0",
     "cors": "^2.8.5",
+    "date-fns": "^2.29.3",
     "emailjs-com": "^3.2.0",
     "jquery": "^3.6.0",
+    "match-sorter": "^6.3.1",
+    "moment": "^2.29.4",
     "mysql2": "^2.3.3",
     "node-fetch": "2.0",
     "nodemailer": "^6.7.4",
@@ -42,6 +45,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "dev": "nodemon ServerDataBase.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
